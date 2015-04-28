@@ -84,13 +84,13 @@ public class Board implements ReadOnlyBoard {
 	}
 
 	//Get the current pointer in a given position - x is column, y is row (Range from 1 to N), if the range is invalid it returns empty - Where N is the width or height depending on the axis
-	public Counter getPosition(int x, int y) {
-		if((x < 1) || (y < 1) || (x > mWidth) || (y > mHeight))
+	public Counter getPosition(int col, int row) {
+		if((col < 1) || (row < 1) || (col > mWidth) || (row > mHeight))
 		{
 			return Counter.EMPTY;
 		}
 		
-		return mBoard[y - 1][x - 1];
+		return mBoard[row - 1][col - 1];
 	}
 
 	//Return the curren width

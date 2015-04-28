@@ -19,7 +19,7 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 	
 	public MainWindow(Observable<GameObserver> g, WindowController c)
 	{
-		super("Project 4");
+		super("Jorge's Game");
 		
 		mGame = g;
 		mWindowController = c;

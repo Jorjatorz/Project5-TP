@@ -2,27 +2,27 @@ package tp.pr4.logic;
 
 public class GravityRules implements GameRules{
 	
-	private final Counter StartPlayer;
-	private final int BoardHeight, BoardWidth;
+	private final Counter mStartPlayer;
+	private final int mBoardHeight, mBoardWidth;
 	
 	
 	public GravityRules()
 	{
-		StartPlayer = Counter.WHITE;
-		BoardWidth = 10;
-		BoardHeight = 10;
+		mStartPlayer = Counter.WHITE;
+		mBoardWidth = 10;
+		mBoardHeight = 10;
 	}
 	
 	public GravityRules(int width, int height)
 	{
-		StartPlayer = Counter.WHITE;
-		BoardWidth = width;
-		BoardHeight = height;
+		mStartPlayer = Counter.WHITE;
+		mBoardWidth = width;
+		mBoardHeight = height;
 	}
 	
 	public Counter initialPlayer()
 	{
-		return StartPlayer;
+		return mStartPlayer;
 	}
 	public boolean isDraw(Counter lastPlayer, Board board)
 	{
@@ -30,7 +30,7 @@ public class GravityRules implements GameRules{
 	}
 	public Board newBoard()
 	{
-		return new Board(BoardWidth, BoardHeight);
+		return new Board(mBoardWidth, mBoardHeight);
 	}
 	public Counter nextTurn(Counter lastPlayer, Board board)
 	{

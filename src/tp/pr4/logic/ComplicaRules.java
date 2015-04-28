@@ -2,19 +2,19 @@ package tp.pr4.logic;
 
 public class ComplicaRules implements GameRules {
 
-	private final Counter StartPlayer;
-	private final int BoardHeight, BoardWidth;
+	private final Counter mStartPlayer;
+	private final int mBoardHeight, mBoardWidth;
 	
 	public ComplicaRules()
 	{
-		StartPlayer = Counter.WHITE;
-		BoardWidth = 4;
-		BoardHeight = 7;
+		mStartPlayer = Counter.WHITE;
+		mBoardWidth = 4;
+		mBoardHeight = 7;
 	}
 	
 	public Counter initialPlayer()
 	{
-		return StartPlayer;
+		return mStartPlayer;
 	}
 	public boolean isDraw(Counter lastPlayer, Board board)
 	{
@@ -22,7 +22,7 @@ public class ComplicaRules implements GameRules {
 	}
 	public Board newBoard()
 	{
-		return new Board(BoardWidth, BoardHeight);
+		return new Board(mBoardWidth, mBoardHeight);
 	}
 	public Counter nextTurn(Counter lastPlayer, Board board)
 	{
