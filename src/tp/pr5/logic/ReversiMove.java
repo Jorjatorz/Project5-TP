@@ -13,7 +13,9 @@ public class ReversiMove extends Move {
 
 	@Override
 	public void executeMove(Board board) throws InvalidMove {
+		System.out.println("Execute move");
 		applyMoveTransformations(board);
+		System.out.println("Execute move ended");
 	}
 
 	@Override
@@ -22,154 +24,155 @@ public class ReversiMove extends Move {
 
 	}
 	
-	public boolean moveAvailable(Board board, Counter currentPlayer) throws InvalidMove
+	public static boolean moveAvailable(Board board, Counter currentPlayer)
 	{
-		for(int k = 1; k < board.getHeight(); k++)
+		
+		System.out.println("Checking for move available");
+		boolean toReturn = false;
+		
+		for(int row = 1; row <= board.getHeight(); row++)
 		{
-			for(int l = 1; l < board.getWidth(); l++)
+			for(int col = 1; col <= board.getWidth(); col++)
 			{
-				if(board.getPosition(l, k) == Counter.EMPTY)
+				if(board.getPosition(col, row) == Counter.EMPTY)
 				{
-					boolean toReturn = false;
-					if (mColumn < 1 || mColumn > board.getWidth()) {
-						throw new InvalidMove("Invalid move: column number " + mColumn + " is not on the board.");
-					} else {
-						//Look upwards
-						Counter toLook = Counter.EMPTY;
-						int i = mRow - 1;
-						int j = mColumn;
-						if( i > 0 && board.getPosition(j, i) != currentPlayer)
+					//Look upwards
+					Counter toLook = Counter.EMPTY;
+					int i = row - 1;
+					int j = col;
+					if( i > 0 && board.getPosition(j, i) != currentPlayer)
+					{
+						while(i > 0 && toLook != currentPlayer)
 						{
-							while(i > 0 && toLook != currentPlayer)
-							{
-								toLook = board.getPosition(j,  i);
-								i--;
-								
-								if(toLook == currentPlayer){
-									toReturn = true;
-								}
+							toLook = board.getPosition(j,  i);
+							i--;
+							
+							if(toLook == currentPlayer){
+								toReturn = true;
 							}
 						}
-						//Look downwards
-						toLook = Counter.EMPTY;
-						i = mRow + 1;
-						j = mColumn;
-						if( i <= board.getHeight() && board.getPosition(j, i) != currentPlayer)
+					}
+					//Look downwards
+					toLook = Counter.EMPTY;
+					i = row + 1;
+					j = col;
+					if( i <= board.getHeight() && board.getPosition(j, i) != currentPlayer)
+					{
+						while(i <= board.getHeight() && toLook != currentPlayer)
 						{
-							while(i <= board.getHeight() && toLook != currentPlayer)
-							{
-								toLook = board.getPosition(j,  i);
-								i++;
-								
-								if(toLook == currentPlayer){
-									toReturn = true;
-								}
+							toLook = board.getPosition(j,  i);
+							i++;
+							
+							if(toLook == currentPlayer){
+								toReturn = true;
 							}
 						}
-						//Look right
-						toLook = Counter.EMPTY;
-						i = mRow;
-						j = mColumn + 1;
-						if( j <= board.getWidth() && board.getPosition(j, i) != currentPlayer)
+					}
+					//Look right
+					toLook = Counter.EMPTY;
+					i = row;
+					j = col + 1;
+					if( j <= board.getWidth() && board.getPosition(j, i) != currentPlayer)
+					{
+						while(j <= board.getWidth() && toLook != currentPlayer)
 						{
-							while(j <= board.getWidth() && toLook != currentPlayer)
-							{
-								toLook = board.getPosition(j,  i);
-								j++;
-								
-								if(toLook == currentPlayer){
-									toReturn = true;
-								}
+							toLook = board.getPosition(j,  i);
+							j++;
+							
+							if(toLook == currentPlayer){
+								toReturn = true;
 							}
 						}
-						//Look left
-						toLook = Counter.EMPTY;
-						i = mRow;
-						j = mColumn - 1;
-						if( j > 0 && board.getPosition(j, i) != currentPlayer)
+					}
+					//Look left
+					toLook = Counter.EMPTY;
+					i = row;
+					j = col - 1;
+					if( j > 0 && board.getPosition(j, i) != currentPlayer)
+					{
+						while(j > 0 && toLook != currentPlayer)
 						{
-							while(j > 0 && toLook != currentPlayer)
-							{
-								toLook = board.getPosition(j,  i);
-								j--;
-								
-								if(toLook == currentPlayer){
-									toReturn = true;
-								}
+							toLook = board.getPosition(j,  i);
+							j--;
+							
+							if(toLook == currentPlayer){
+								toReturn = true;
 							}
 						}
-						//Look up right diagonal
-						toLook = Counter.EMPTY;
-						i = mRow - 1;
-						j = mColumn + 1;
-						if( i > 0 && j <= board.getWidth() && board.getPosition(j, i) != currentPlayer)
+					}
+					//Look up right diagonal
+					toLook = Counter.EMPTY;
+					i = row - 1;
+					j = col + 1;
+					if( i > 0 && j <= board.getWidth() && board.getPosition(j, i) != currentPlayer)
+					{
+						while(i > 0 && j <= board.getWidth() && toLook != currentPlayer)
 						{
-							while(i > 0 && j <= board.getWidth() && toLook != currentPlayer)
-							{
-								toLook = board.getPosition(j,  i);
-								i--;
-								j++;
-								
-								if(toLook == currentPlayer){
-									toReturn = true;
-								}
+							toLook = board.getPosition(j,  i);
+							i--;
+							j++;
+							
+							if(toLook == currentPlayer){
+								toReturn = true;
 							}
 						}
-						//Look up left diagonal
-						toLook = Counter.EMPTY;
-						i = mRow - 1;
-						j = mColumn - 1;
-						if( i > 0 && j > 0 && board.getPosition(j, i) != currentPlayer)
+					}
+					//Look up left diagonal
+					toLook = Counter.EMPTY;
+					i = row - 1;
+					j = col - 1;
+					if( i > 0 && j > 0 && board.getPosition(j, i) != currentPlayer)
+					{
+						while(i > 0 && j > 0 && toLook != currentPlayer)
 						{
-							while(i > 0 && j > 0 && toLook != currentPlayer)
-							{
-								toLook = board.getPosition(j,  i);
-								i--;
-								j--;
-								
-								if(toLook == currentPlayer){
-									toReturn = true;
-								}
+							toLook = board.getPosition(j,  i);
+							i--;
+							j--;
+							
+							if(toLook == currentPlayer){
+								toReturn = true;
 							}
 						}
-						//Look down right diagonal
-						toLook = Counter.EMPTY;
-						i = mRow + 1;
-						j = mColumn + 1;
-						if( i <= board.getHeight() && j <= board.getWidth() && board.getPosition(j, i) != currentPlayer)
+					}
+					//Look down right diagonal
+					toLook = Counter.EMPTY;
+					i = row + 1;
+					j = col + 1;
+					if( i <= board.getHeight() && j <= board.getWidth() && board.getPosition(j, i) != currentPlayer)
+					{
+						while(i <= board.getHeight() && j <= board.getWidth() && toLook != currentPlayer)
 						{
-							while(i <= board.getHeight() && j <= board.getWidth() && toLook != currentPlayer)
-							{
-								toLook = board.getPosition(j,  i);
-								i++;
-								j++;
-								
-								if(toLook == currentPlayer){
-									toReturn = true;
-								}
+							toLook = board.getPosition(j,  i);
+							i++;
+							j++;
+							
+							if(toLook == currentPlayer){
+								toReturn = true;
 							}
 						}
-						//Look down left diagonal
-						toLook = Counter.EMPTY;
-						i = mRow + 1;
-						j = mColumn - 1;
-						if( i <= board.getHeight() && j > 0 && board.getPosition(j, i) != currentPlayer)
+					}
+					//Look down left diagonal
+					toLook = Counter.EMPTY;
+					i = row + 1;
+					j = col - 1;
+					if( i <= board.getHeight() && j > 0 && board.getPosition(j, i) != currentPlayer)
+					{
+						while(i <= board.getHeight() && j > 0 && toLook != currentPlayer)
 						{
-							while(i <= board.getHeight() && j > 0 && toLook != currentPlayer)
-							{
-								toLook = board.getPosition(j,  i);
-								i++;
-								j--;
-								
-								if(toLook == currentPlayer){
-									toReturn = true;
-								}
+							toLook = board.getPosition(j,  i);
+							i++;
+							j--;
+							
+							if(toLook == currentPlayer){
+								toReturn = true;
 							}
 						}
 					}
 				}
 			}
-		}		
+		}
+		
+		System.out.println("Checking for move available Ended");
 		
 		return toReturn;
 	}

@@ -40,7 +40,7 @@ public class ReversiRules implements GameRules {
 			}
 		}
 		
-		if(whites == blacks)
+		if(whites == blacks && !ReversiMove.moveAvailable(board, Counter.swap(lastPlayer)))
 		{
 			return true;
 		}
