@@ -122,7 +122,7 @@ public class Game implements Observable<GameObserver>{
 			
 			mLastMove = move;
 			
-			//Notify the start of a move
+			//Notify the end of a move
 			for(GameObserver o: mObserversList)
 			{
 				o.moveExecFinished(mBoard, mTurn,  mRules.nextTurn(mTurn, mBoard));

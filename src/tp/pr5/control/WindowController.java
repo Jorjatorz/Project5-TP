@@ -58,21 +58,24 @@ public class WindowController extends Controller {
 		{
 			case 0: //c4
 				mGameFactory = new Connect4Factory();
-				mGame.reset(mGameFactory.createRules());
 				break;
 				
 			case 1: //co
-				//mGameFactory = new ComplicaFactory();
-				mGameFactory = new ReversiFactory();
-				mGame.reset(mGameFactory.createRules());
+				mGameFactory = new ComplicaFactory();
 				break;
 				
-			case 2: //gr
-				mGameFactory = new GravityFactory(cols, rows);
-				mGame.reset(mGameFactory.createRules());
-
+			case 2: //Reversi
+				mGameFactory = new ReversiFactory();
 				break;
+				
+			case 3: //gr
+				mGameFactory = new GravityFactory(cols, rows);
+				break;
+			default:
+				mGameFactory = new Connect4Factory();
 		}
+		
+		mGame.reset(mGameFactory.createRules());
 		
 	}
 	//Called by the view.

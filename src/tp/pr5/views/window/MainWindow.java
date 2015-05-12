@@ -119,7 +119,7 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 		rightPanel.add(changeGamePanel, BorderLayout.PAGE_END);
 		//Combo box with different games list
 		final JComboBox<String> gamesList;
-		String gamesNames[] = {"Connect-4", "Complica", "Gravity"};
+		String gamesNames[] = {"Connect-4", "Complica", "Reversi", "Gravity"};
 		gamesList = new JComboBox<String>(gamesNames);
 		gamesList.setSelectedIndex(0);
 		gamesList.setSize(changeGamePanel.getWidth(), 10);
@@ -132,7 +132,7 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 			public void actionPerformed(ActionEvent e) {
 				//Detect if the selected index is the one of the gravity game
 				//Set visible or not the labels and textareas for getting the widht and height for the gravity game
-				if(gamesList.getSelectedIndex() == 2)
+				if(gamesList.getSelectedIndex() == 3)
 				{
 					colsLabel.setVisible(true);
 					colsTextArea.setVisible(true);	
