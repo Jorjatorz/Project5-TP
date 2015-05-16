@@ -154,6 +154,14 @@ public class ConsoleController extends Controller {
 					valid = true;
 					break;
 					
+				case "rv":
+					mGameFactory = new ReversiFactory();
+					mWhitePlayer = mGameFactory.createHumanPlayerAtConsole(in);
+					mBlackPlayer = mGameFactory.createHumanPlayerAtConsole(in);
+					mGame.reset(mGameFactory.createRules());
+					valid = true;
+					break;
+					
 				case "gr":
 					if(words.length == 4)
 					{

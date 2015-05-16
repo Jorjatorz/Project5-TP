@@ -48,7 +48,7 @@ public class GravityRules implements GameRules{
 		return winner;
 	}
 	
-	//Function that checks if there is for in a row (Horizontally, vertically and diagonally)
+	//Function that checks if there is four in a row (Horizontally, vertically and diagonally)
 		private boolean checkForWinner(Board mBoard) {
 			boolean winner = false;
 			

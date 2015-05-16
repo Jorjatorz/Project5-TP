@@ -128,9 +128,10 @@ public class Game implements Observable<GameObserver>{
 				o.moveExecFinished(mBoard, mTurn,  mRules.nextTurn(mTurn, mBoard));
 			}
 			
-			if(mRules.winningMove(mLastMove, mBoard) != Counter.EMPTY) //If we have a winner exit
+			Counter newWinner = mRules.winningMove(mLastMove, mBoard);
+			if(newWinner != Counter.EMPTY) //If we have a winner exit
 			{
-				mWinner = mLastMove.getPlayer();
+				mWinner = newWinner;
 				setFinished(true);
 				
 				for(GameObserver o: mObserversList)

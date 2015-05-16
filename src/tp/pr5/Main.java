@@ -209,6 +209,20 @@ public class Main {
 			case 2:
 				if(console)
 				{
+					GameTypeFactory rvFact = new ReversiFactory();
+					Game g = new Game(rvFact.createRules());
+					toReturnController = new ConsoleController(rvFact, g);
+				}
+				else
+				{
+					GameTypeFactory rvFact = new ReversiFactory();
+					Game g = new Game(rvFact.createRules());
+					toReturnController = new WindowController(rvFact, g);
+				}
+				break;
+			case 3:
+				if(console)
+				{
 					GameTypeFactory grFact = new GravityFactory(cols, rows);
 					Game g = new Game(grFact.createRules());
 					toReturnController = new ConsoleController(grFact, g);
@@ -234,8 +248,10 @@ public class Main {
 			return 0;
 		case "co":
 			return 1;
-		case "gr":
+		case "rv":
 			return 2;
+		case "gr":
+			return 3;
 		default:
 			return -1;
 		}

@@ -39,8 +39,6 @@ public class ReversiMove extends Move {
 	
 	public static boolean moveAvailable(Board board, Counter currentPlayer)
 	{
-		
-		System.out.println("Checking for move available");
 		boolean toReturn = false;
 		
 		for(int row = 1; row <= board.getHeight(); row++)
@@ -185,8 +183,6 @@ public class ReversiMove extends Move {
 			}
 		}
 		
-		System.out.println("Checking for move available Ended");
-		
 		return toReturn;
 	}
 
@@ -219,22 +215,13 @@ public class ReversiMove extends Move {
 		if (mColumn < 1 || mColumn > board.getWidth()) {
 			throw new InvalidMove("Invalid move: column number " + mColumn + " is not on the board.");
 		} else {
-			
-			System.out.println("up move");
 			boolean up = upMoveTransformations(board);
-			System.out.println("down move");
 			boolean down = downMoveTransformations(board);
-			System.out.println("right move");
 			boolean right = rightMoveTransformations(board);
-			System.out.println("left move");
 			boolean left = leftMoveTransformations(board);
-			System.out.println("upRD move");
 			boolean upRD = upRightDiagonalMoveTransformations(board);
-			System.out.println("upLD move");
 			boolean upLD = upLeftDiagonalMoveTransformations(board);
-			System.out.println("downRD move");
 			boolean downRD = downRightDiagonalMoveTransformations(board);
-			System.out.println("downLD move");
 			boolean downLD = downLeftDiagonalMoveTransformations(board);		
 			
 			if(up || down || right || left || upRD || upLD || downRD || downLD)
@@ -557,6 +544,7 @@ public class ReversiMove extends Move {
 				
 				if(toLook == mColour){
 					toReturn = true;
+					swapsAvailable = true;
 				}
 			}
 			
