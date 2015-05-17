@@ -31,7 +31,7 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 	
 	//GUI COMPONENTS--------------------------------------------------------------------------------------------------------------
 	//Panels of the GUI
-	private JPanel mainPanel, bottomPanel, rightPanel, gamePanel, changeGamePanel,centerPanel, turnPanel;
+	private JPanel mainPanel, bottomPanel, rightPanel, gamePanel, changeGamePanel,centerPanel, turnPanel, playerTypePanel;
 	//Buttons of the GUI
 	private JButton randomMoveButton, exitButton, undoButton, resetButton, changeButton;
 	//Graphic board
@@ -71,14 +71,14 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 		rightPanel.setBackground(Color.LIGHT_GRAY);		
 		mainPanel.add(rightPanel, BorderLayout.LINE_END);
 		
-		//Game Controls Panel
+		//Game Controls Panel------------------------------------------------------------------------------
 		Border rightPanelsBorder = BorderFactory.createLineBorder(Color.black, 1);
 		gamePanel = new JPanel();
-		gamePanel.setSize(new Dimension(rightPanel.getWidth(), rightPanel.getHeight() / 2));
-		gamePanel.setPreferredSize(new Dimension(rightPanel.getWidth(), rightPanel.getHeight() / 2));
+		gamePanel.setSize(new Dimension(rightPanel.getWidth(), rightPanel.getHeight() / 3));
+		gamePanel.setPreferredSize(new Dimension(rightPanel.getWidth(), rightPanel.getHeight() / 3));
 		gamePanel.setBackground(Color.LIGHT_GRAY);
 		gamePanel.setBorder(BorderFactory.createTitledBorder(rightPanelsBorder, "Game"));
-		rightPanel.add(gamePanel, BorderLayout.CENTER);
+		rightPanel.add(gamePanel, BorderLayout.PAGE_START);
 		//Undo Button
 		undoButton = new JButton("Undo");
 		undoButton.setPreferredSize(new Dimension(180, 55));
@@ -108,12 +108,37 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 		resetButton.setIcon(new ImageIcon(Main.class.getResource("Icons/reset.png")));
 		gamePanel.add(resetButton);	
 		
-		//ChangeGame Panel
+		//PlayerType Panel------------------------------------------------------------------------------------------
+		playerTypePanel = new JPanel();
+		playerTypePanel.setSize(new Dimension(rightPanel.getWidth(), rightPanel.getHeight() / 3));
+		playerTypePanel.setPreferredSize(new Dimension(rightPanel.getWidth(), rightPanel.getHeight() / 3));
+		playerTypePanel.setBackground(Color.LIGHT_GRAY);
+		playerTypePanel.setBorder(BorderFactory.createTitledBorder(rightPanelsBorder, "Player Type"));
+		rightPanel.add(playerTypePanel, BorderLayout.CENTER);
+		
+		JPanel whitePlayerPanel = new JPanel();
+		//whitePlayerPanel.setSize(new Dimension(playerTypePanel.getWidth(), rightPanel.getHeight() / 3));
+		//whitePlayerPanel.setPreferredSize(new Dimension(rightPanel.getWidth(), rightPanel.getHeight() / 3));
+		whitePlayerPanel.setBackground(Color.LIGHT_GRAY);
+		JLabel whitePlayerLabel = new JLabel("White Player");
+		whitePlayerPanel.add(whitePlayerLabel);
+		
+		JPanel blackPlayerPanel = new JPanel();
+		//blackPlayerPanel.setSize(new Dimension(playerTypePanel.getWidth(), rightPanel.getHeight() / 3));
+		//blackPlayerPanel.setPreferredSize(new Dimension(rightPanel.getWidth(), rightPanel.getHeight() / 3));
+		blackPlayerPanel.setBackground(Color.LIGHT_GRAY);
+		JLabel blackPlayerLabel = new JLabel("Black Player");
+		blackPlayerPanel.add(blackPlayerLabel);
+		
+		playerTypePanel.add(whitePlayerPanel);
+		playerTypePanel.add(blackPlayerPanel);
+		
+		//ChangeGame Panel-------------------------------------------------------------------------------------------
 		changeGamePanel = new JPanel();
 		changeGamePanel.setLayout(new BoxLayout(changeGamePanel, BoxLayout.Y_AXIS));
 
-		changeGamePanel.setSize(new Dimension(rightPanel.getWidth(), rightPanel.getHeight() / 2));
-		changeGamePanel.setPreferredSize(new Dimension(rightPanel.getWidth(), rightPanel.getHeight() / 2));
+		changeGamePanel.setSize(new Dimension(rightPanel.getWidth(), rightPanel.getHeight() / 3));
+		changeGamePanel.setPreferredSize(new Dimension(rightPanel.getWidth(), rightPanel.getHeight() / 3));
 		changeGamePanel.setBackground(Color.LIGHT_GRAY);
 		changeGamePanel.setBorder(BorderFactory.createTitledBorder(rightPanelsBorder, "Change game"));
 		rightPanel.add(changeGamePanel, BorderLayout.PAGE_END);
@@ -262,7 +287,7 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 		centerPanel.setBackground(Color.LIGHT_GRAY);		
 		mainPanel.add(centerPanel, BorderLayout.CENTER);
 		//Graphical board for representing the games board
-		graphicBoard = new GraphicBoardComponent(10, 10, mWindowController);
+		graphicBoard = new GraphicBoardComponent(10, 10, mWindowController, mGame);
 		graphicBoard.setPreferredSize(new Dimension(centerPanel.getWidth(), centerPanel.getHeight() - centerPanel.getHeight() / 12));
 		centerPanel.add(graphicBoard, BorderLayout.CENTER);
 		
@@ -284,7 +309,6 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 	@Override
 	public void moveExecFinished(ReadOnlyBoard board, Counter player, Counter nextPlayer) {
 		//Update board, turn and undo button
-		graphicBoard.setBoardToRender(board);
 		turnLabel.setText(nextPlayer.toString());
 		undoButton.setEnabled(true);
 	}
@@ -333,8 +357,7 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 	public void onUndo(ReadOnlyBoard board, Counter nextPlayer,
 			boolean undoPossible) {
 		
-		//Update the board and the turn
-		graphicBoard.setBoardToRender(board);
+		//Update the turn
 		turnLabel.setText(nextPlayer.toString());
 		//Update buttons
 		if(undoPossible)
@@ -354,9 +377,6 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 
 	@Override
 	public void reset(ReadOnlyBoard board, Counter player, Boolean undoPossible) {
-		//Reset the board
-		graphicBoard.setBoardSize(board.getHeight(), board.getWidth());
-		graphicBoard.setBoardToRender(board);
 		//Reset the player turn
 		turnLabel.setText(player.toString());
 		

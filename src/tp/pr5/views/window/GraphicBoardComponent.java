@@ -11,6 +11,8 @@ import javax.swing.JComponent;
 
 import tp.pr5.control.WindowController;
 import tp.pr5.logic.Counter;
+import tp.pr5.logic.GameObserver;
+import tp.pr5.logic.Observable;
 import tp.pr5.logic.ReadOnlyBoard;
 
 /**
@@ -19,7 +21,7 @@ import tp.pr5.logic.ReadOnlyBoard;
  *
  */
 
-public class GraphicBoardComponent extends JComponent {
+public class GraphicBoardComponent extends JComponent implements GameObserver {
 	private int mCellHeight;
 	private int mCellWidth;
 
@@ -29,10 +31,12 @@ public class GraphicBoardComponent extends JComponent {
 	
 	private WindowController mController;
 
-	public GraphicBoardComponent(int rows, int cols, WindowController c) {
+	public GraphicBoardComponent(int rows, int cols, WindowController c, Observable<GameObserver> mGame) {
 		mCellHeight = 50;
 		mCellWidth = 50;
 		mController = c;
+		
+		mGame.addObserver(this);
 		
 		initBoard(rows, cols);
 		initGUI();
@@ -161,5 +165,49 @@ public class GraphicBoardComponent extends JComponent {
 		default:
 			return Color.lightGray;
 		}
+	}
+
+	@Override
+	public void moveExecFinished(ReadOnlyBoard board, Counter player, Counter nextPlayer) {
+		this.setBoardToRender(board);
+		
+	}
+
+	@Override
+	public void moveExecStart(Counter player) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onGameOver(ReadOnlyBoard board, Counter winner) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onMoveError(String msg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUndo(ReadOnlyBoard board, Counter nextPlayer,	boolean undoPossible) {
+		this.setBoardToRender(board);
+		
+	}
+
+	@Override
+	public void onUndoNotPossible() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void reset(ReadOnlyBoard board, Counter player, Boolean undoPossible) {
+		//Reset the board
+		this.setBoardSize(board.getHeight(), board.getWidth());
+		this.setBoardToRender(board);
+		
 	}
 }

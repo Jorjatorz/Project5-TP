@@ -5,6 +5,7 @@ public enum Counter
 	EMPTY("Empty"), WHITE("White"), BLACK("Black");
 	
 	private String name;
+	PlayerType mPlayerType = PlayerType.HUMAN;
 	
 	Counter(String name) {
 		this.name = name;
@@ -26,6 +27,16 @@ public enum Counter
 		}
 		
 		return col;
+	}
+	
+	public PlayerType getPlayerType()
+	{
+		return mPlayerType;
+	}
+	
+	public void setPlayerType(PlayerType newPlayerType)
+	{
+		mPlayerType = newPlayerType;
 	}
 
 }
