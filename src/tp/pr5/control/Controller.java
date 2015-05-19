@@ -13,7 +13,13 @@ import java.util.Scanner;
 import tp.pr5.logic.*;
 
 
-public abstract class Controller {	
+public abstract class Controller {
+	
+	protected Controller()
+	{
+		mWhitePlayer = Counter.WHITE;
+		mBlackPlayer = Counter.BLACK;
+	}
 	
 	public abstract void run();
 	
@@ -21,30 +27,8 @@ public abstract class Controller {
 	//Game rules for the different games, also the rules that are currently being used
 	protected GameTypeFactory mGameFactory;
 	//TYpe of player in each color
-	protected Player mWhitePlayer, mBlackPlayer;
+	protected Counter mWhitePlayer, mBlackPlayer;
 	
-	protected void makeMove()
-	{
-		Move newMove;
-		
-		if(mGame.getTurn() == Counter.WHITE)
-		{
-			newMove = mWhitePlayer.getMove(mGame.getBoard(), Counter.WHITE);
-		}
-		else
-		{
-			newMove = mBlackPlayer.getMove(mGame.getBoard(), Counter.BLACK);
-		}
-		
-		try
-		{
-			mGame.executeMove(newMove);
-			
-		}catch(InvalidMove e)
-		{
-			mGame.moveErrorTriggered(e.getMessage());
-		}
-
-	}
+	protected  abstract void makeMove(int col, int row);
 
 }

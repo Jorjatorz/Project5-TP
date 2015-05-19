@@ -195,8 +195,8 @@ public class Game implements Observable<GameObserver>{
 	@Override
 	public void addObserver(GameObserver o) {
 		mObserversList.add(o);
-		// o.reset(board, player, undoPossible);  // TODO: change it
-		reset(mRules);
+		
+		o.reset((ReadOnlyBoard)mBoard, mTurn, false);  // TODO: change it
 	}
 
 

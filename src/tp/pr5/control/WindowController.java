@@ -2,7 +2,11 @@ package tp.pr5.control;
 
 import java.util.Scanner;
 
+import tp.pr5.logic.Counter;
 import tp.pr5.logic.Game;
+import tp.pr5.logic.InvalidMove;
+import tp.pr5.logic.Move;
+import tp.pr5.logic.PlayerType;
 import tp.pr5.views.window.MainWindow;
 
 public class WindowController extends Controller {
@@ -27,11 +31,8 @@ public class WindowController extends Controller {
 	
 	//Called by the view.
 	public void GUImakeMove(int col, int row)
-	{
-		mWhitePlayer = mGameFactory.createHumanPlayerAtGUI(col, row);
-		mBlackPlayer = mGameFactory.createHumanPlayerAtGUI(col, row);
-		
-		makeMove();
+	{		
+		makeMove(col, row);
 	}
 	//Called by the view.
 	public void GUImakeUndo()
@@ -46,10 +47,10 @@ public class WindowController extends Controller {
 	//Called by the view.
 	public void GUImakeRandomMove()
 	{
-		mWhitePlayer = mGameFactory.createRandomPlayer();
+		/*mWhitePlayer = mGameFactory.createRandomPlayer().;
 		mBlackPlayer = mGameFactory.createRandomPlayer();
 		
-		makeMove();
+		makeMove();*/
 	}
 	//Called by the view.
 	public void GUImakeChangeGame(int game, int cols, int rows)
@@ -82,6 +83,53 @@ public class WindowController extends Controller {
 	public void GUImakeExit()
 	{
 		isRunning = false;
+	}
+
+	public void GUIsetPlayerMode(Counter player, PlayerType selectedPlayerType) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void stopAutoPlayer()
+	{
+		
+	}
+	
+	private void automaticMove()
+	{
+		
+	}
+
+	@Override
+	//TODO Make a makeRandomMove y automaticMove
+	protected void makeMove(int col, int row) {
+		Move newMove;
+		
+		if(mGame.getTurn() == Counter.WHITE)
+		{
+			if(mWhitePlayer.getPlayerType() == PlayerType.HUMAN)
+				newMove = mGameFactory.createHumanPlayerAtGUI(col, row).getMove(mGame.getBoard(), mWhitePlayer);
+			else
+				newMove = mGameFactory.createRandomPlayer().getMove(mGame.getBoard(), mWhitePlayer);
+		}
+		else
+		{
+			if(mBlackPlayer.getPlayerType() == PlayerType.HUMAN)
+				newMove = mGameFactory.createHumanPlayerAtGUI(col, row).getMove(mGame.getBoard(), mBlackPlayer);
+			else
+				newMove = mGameFactory.createRandomPlayer().getMove(mGame.getBoard(), mBlackPlayer);
+		}
+		
+		try
+		{
+			mGame.executeMove(newMove);
+			
+		}catch(InvalidMove e)
+		{
+			mGame.moveErrorTriggered(e.getMessage());
+		}
+
+		
 	}
 
 }

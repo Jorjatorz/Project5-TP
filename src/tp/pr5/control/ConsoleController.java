@@ -4,6 +4,9 @@ import java.util.Scanner;
 
 import tp.pr5.logic.Counter;
 import tp.pr5.logic.Game;
+import tp.pr5.logic.InvalidMove;
+import tp.pr5.logic.Move;
+import tp.pr5.logic.PlayerType;
 import tp.pr5.views.console.ConsoleView;
 
 public class ConsoleController extends Controller {
@@ -20,8 +23,8 @@ public class ConsoleController extends Controller {
 		
 		in = new Scanner(System.in);
 		
-		mWhitePlayer = mGameFactory.createHumanPlayerAtConsole(in);
-		mBlackPlayer = mGameFactory.createHumanPlayerAtConsole(in); 
+		mWhitePlayer = Counter.WHITE;
+		mBlackPlayer = Counter.BLACK; 
 	}
 	
 	private void handleCommand(String command)
@@ -55,7 +58,7 @@ public class ConsoleController extends Controller {
 			{
 				if(words[1].equals("a") && words[2].equals("move"))
 				{
-					makeMove();
+					makeMove(-1, -1);
 				}
 				else
 				{
@@ -98,11 +101,11 @@ public class ConsoleController extends Controller {
 				switch(words[2])
 				{
 				case "human":
-					mWhitePlayer = mGameFactory.createHumanPlayerAtConsole(in);
+					mWhitePlayer.setPlayerType(PlayerType.HUMAN);
 					valid = true;
 					break;
 				case "random":
-					mWhitePlayer = mGameFactory.createRandomPlayer();
+					mWhitePlayer.setPlayerType(PlayerType.AUTO);
 					valid = true;
 					break;						
 				}
@@ -113,11 +116,11 @@ public class ConsoleController extends Controller {
 				switch(words[2])
 				{
 				case "human":
-					mBlackPlayer = mGameFactory.createHumanPlayerAtConsole(in);
+					mBlackPlayer.setPlayerType(PlayerType.HUMAN);
 					valid = true;
 					break;
 				case "random":
-					mBlackPlayer = mGameFactory.createRandomPlayer();
+					mBlackPlayer.setPlayerType(PlayerType.AUTO);
 					valid = true;
 					break;						
 				}
@@ -140,24 +143,24 @@ public class ConsoleController extends Controller {
 			{
 				case "c4":
 					mGameFactory = new Connect4Factory();
-					mWhitePlayer = mGameFactory.createHumanPlayerAtConsole(in);
-					mBlackPlayer = mGameFactory.createHumanPlayerAtConsole(in);
+					mWhitePlayer = Counter.WHITE;
+					mBlackPlayer = Counter.BLACK;
 					mGame.reset(mGameFactory.createRules());
 					valid = true;
 					break;
 					
 				case "co":
 					mGameFactory = new ComplicaFactory();
-					mWhitePlayer = mGameFactory.createHumanPlayerAtConsole(in);
-					mBlackPlayer = mGameFactory.createHumanPlayerAtConsole(in);
+					mWhitePlayer = Counter.WHITE;
+					mBlackPlayer = Counter.BLACK;
 					mGame.reset(mGameFactory.createRules());
 					valid = true;
 					break;
 					
 				case "rv":
 					mGameFactory = new ReversiFactory();
-					mWhitePlayer = mGameFactory.createHumanPlayerAtConsole(in);
-					mBlackPlayer = mGameFactory.createHumanPlayerAtConsole(in);
+					mWhitePlayer = Counter.WHITE;
+					mBlackPlayer = Counter.BLACK;
 					mGame.reset(mGameFactory.createRules());
 					valid = true;
 					break;
@@ -172,8 +175,8 @@ public class ConsoleController extends Controller {
 						if(height > 0 && width > 0)
 						{
 							mGameFactory = new GravityFactory(width, height);
-							mWhitePlayer = mGameFactory.createHumanPlayerAtConsole(in);
-							mBlackPlayer = mGameFactory.createHumanPlayerAtConsole(in);
+							mWhitePlayer = Counter.WHITE;
+							mBlackPlayer = Counter.BLACK;
 							mGame.reset(mGameFactory.createRules());
 							valid = true;
 						}
@@ -181,8 +184,8 @@ public class ConsoleController extends Controller {
 						{
 							//If not generate a  1 x 1 board
 							mGameFactory = new GravityFactory(1, 1);
-							mWhitePlayer = mGameFactory.createHumanPlayerAtConsole(in);
-							mBlackPlayer = mGameFactory.createHumanPlayerAtConsole(in);
+							mWhitePlayer = Counter.WHITE;
+							mBlackPlayer = Counter.BLACK;
 							mGame.reset(mGameFactory.createRules());
 							valid = true;
 						}
@@ -227,5 +230,37 @@ public class ConsoleController extends Controller {
 			String command = in.nextLine();
 			handleCommand(command);
 		}
+	}
+
+	@Override
+	protected void makeMove(int col, int row)
+	{
+		Move newMove;
+		
+		if(mGame.getTurn() == Counter.WHITE)
+		{
+			if(mWhitePlayer.getPlayerType() == PlayerType.HUMAN)
+				newMove = mGameFactory.createHumanPlayerAtConsole(in).getMove(mGame.getBoard(), mWhitePlayer);
+			else
+				newMove = mGameFactory.createRandomPlayer().getMove(mGame.getBoard(), mWhitePlayer);
+		}
+		else
+		{
+			if(mBlackPlayer.getPlayerType() == PlayerType.HUMAN)
+				newMove = mGameFactory.createHumanPlayerAtConsole(in).getMove(mGame.getBoard(), mBlackPlayer);
+			else
+				newMove = mGameFactory.createRandomPlayer().getMove(mGame.getBoard(), mBlackPlayer);
+		}
+		
+		try
+		{
+			mGame.executeMove(newMove);
+			
+		}catch(InvalidMove e)
+		{
+			mGame.moveErrorTriggered(e.getMessage());
+		}
+
+		
 	}
 }

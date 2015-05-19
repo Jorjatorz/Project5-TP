@@ -36,10 +36,11 @@ public class GraphicBoardComponent extends JComponent implements GameObserver {
 		mCellWidth = 50;
 		mController = c;
 		
-		mGame.addObserver(this);
 		
 		initBoard(rows, cols);
 		initGUI();
+		
+		mGame.addObserver(this);
 	}
 
 	//Init board to empty

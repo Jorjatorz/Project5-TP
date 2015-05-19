@@ -109,7 +109,7 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 		gamePanel.add(resetButton);	
 		
 		//PlayerType Panel------------------------------------------------------------------------------------------
-		playerTypePanel = new JPanel();
+		playerTypePanel = new JPanel(new GridLayout(2, 1));
 		playerTypePanel.setSize(new Dimension(rightPanel.getWidth(), rightPanel.getHeight() / 3));
 		playerTypePanel.setPreferredSize(new Dimension(rightPanel.getWidth(), rightPanel.getHeight() / 3));
 		playerTypePanel.setBackground(Color.LIGHT_GRAY);
@@ -117,18 +117,25 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 		rightPanel.add(playerTypePanel, BorderLayout.CENTER);
 		
 		JPanel whitePlayerPanel = new JPanel();
-		//whitePlayerPanel.setSize(new Dimension(playerTypePanel.getWidth(), rightPanel.getHeight() / 3));
-		//whitePlayerPanel.setPreferredSize(new Dimension(rightPanel.getWidth(), rightPanel.getHeight() / 3));
 		whitePlayerPanel.setBackground(Color.LIGHT_GRAY);
 		JLabel whitePlayerLabel = new JLabel("White Player");
 		whitePlayerPanel.add(whitePlayerLabel);
 		
+		//Combo box with different games list
+		final JComboBox<PlayerType> whitePlayerTypeList;
+		whitePlayerTypeList = new JComboBox<PlayerType>(new PlayersModel(Counter.WHITE, mWindowController));
+		whitePlayerTypeList.setSelectedIndex(0);
+		whitePlayerPanel.add(whitePlayerTypeList);
+		
 		JPanel blackPlayerPanel = new JPanel();
-		//blackPlayerPanel.setSize(new Dimension(playerTypePanel.getWidth(), rightPanel.getHeight() / 3));
-		//blackPlayerPanel.setPreferredSize(new Dimension(rightPanel.getWidth(), rightPanel.getHeight() / 3));
 		blackPlayerPanel.setBackground(Color.LIGHT_GRAY);
 		JLabel blackPlayerLabel = new JLabel("Black Player");
 		blackPlayerPanel.add(blackPlayerLabel);
+		
+		final JComboBox<PlayerType> blackPlayerTypeList;
+		blackPlayerTypeList = new JComboBox<PlayerType>(new PlayersModel(Counter.BLACK, mWindowController));
+		blackPlayerTypeList.setSelectedIndex(0);
+		blackPlayerPanel.add(blackPlayerTypeList);
 		
 		playerTypePanel.add(whitePlayerPanel);
 		playerTypePanel.add(blackPlayerPanel);
@@ -262,7 +269,6 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 		
 		exitButton = new JButton("Exit");
 		exitButton.setPreferredSize(new Dimension(180, 55));
-		final JFrame currentFrame = this;
 		exitButton.addActionListener(new ActionListener()
 		{
 
