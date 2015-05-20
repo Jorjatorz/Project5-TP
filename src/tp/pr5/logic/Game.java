@@ -8,6 +8,7 @@ public class Game implements Observable<GameObserver>{
 	//Private variables
 	private Board mBoard;
 	private Counter mTurn;
+	private Counter mWhitePlayer, mBlackPlayer;
 	private boolean mFinished;
 	private Counter mWinner;
 	private GameRules mRules;
@@ -23,7 +24,10 @@ public class Game implements Observable<GameObserver>{
 	{
 		mBoard = rules.newBoard();
 		mFinished = false;
+		
 		mTurn = rules.initialPlayer();
+		mWhitePlayer = Counter.WHITE;
+		mBlackPlayer = Counter.BLACK;
 		
 		mUndoStack = new Stack<Move>();
 		
@@ -90,9 +94,42 @@ public class Game implements Observable<GameObserver>{
 	}
 
 	//Goes to the next turn
-	public void nextTurn()
+	public Counter nextTurn()
+	{		
+		Counter toRet = mRules.nextTurn(mTurn, mBoard);
+		
+		if(toRet == Counter.WHITE)
+		{
+			toRet.setPlayerType(mWhitePlayer.getPlayerType());
+		}
+		else
+		{
+			toRet.setPlayerType(mBlackPlayer.getPlayerType());
+		}
+		
+		return toRet;
+	}
+	
+	//Change the type of the player
+	public void setPlayerType(Counter player)
 	{
-		mTurn = mRules.nextTurn(mTurn, mBoard);
+		if(player == Counter.WHITE)
+		{
+			mWhitePlayer.setPlayerType(player.getPlayerType());
+		}
+		else if(player == Counter.BLACK)
+		{
+			mBlackPlayer.setPlayerType(player.getPlayerType());
+		}
+		
+		if(mTurn == Counter.WHITE)
+		{
+			mTurn = mWhitePlayer;
+		}
+		else if(mTurn == Counter.BLACK)
+		{
+			mTurn = mBlackPlayer;
+		}
 	}
 	
 	//Execute a new move if the game is not finished, its made by the correct player and the column is valid.
@@ -107,7 +144,7 @@ public class Game implements Observable<GameObserver>{
 			throw new InvalidMove("Not your turn!");
 		}
 		else
-		{
+		{			
 			//Notify the start of a move
 			for(GameObserver o: mObserversList)
 			{
@@ -152,7 +189,7 @@ public class Game implements Observable<GameObserver>{
 			else
 			{
 				//If we haven't finish yet go to the next turn.
-				nextTurn();
+				mTurn = nextTurn();
 			}
 		}
 	}
@@ -177,7 +214,7 @@ public class Game implements Observable<GameObserver>{
 		{
 			mUndoStack.pop().undo(mBoard);
 			
-			nextTurn(); //After undo the turn should change
+			mTurn = nextTurn(); //After undo the turn should change
 			
 			//Notify correct undo. Send the status of the queue (if its empty we pass false to undo possible)
 			for(GameObserver o: mObserversList)

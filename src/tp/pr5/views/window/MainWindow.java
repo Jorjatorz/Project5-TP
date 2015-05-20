@@ -40,6 +40,8 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 	JLabel turnLabel, colsLabel, rowsLabel;
 	//Text fields
 	JTextField colsTextArea, rowsTextArea;
+	//Comboboxes
+	JComboBox<PlayerType> whitePlayerTypeList, blackPlayerTypeList;;
 	//------------------------------------------------------------------------------------------------------------------------------
 	
 	private void initGUI()
@@ -122,7 +124,7 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 		whitePlayerPanel.add(whitePlayerLabel);
 		
 		//Combo box with different games list
-		final JComboBox<PlayerType> whitePlayerTypeList;
+
 		whitePlayerTypeList = new JComboBox<PlayerType>(new PlayersModel(Counter.WHITE, mWindowController));
 		whitePlayerTypeList.setSelectedIndex(0);
 		whitePlayerPanel.add(whitePlayerTypeList);
@@ -132,7 +134,6 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 		JLabel blackPlayerLabel = new JLabel("Black Player");
 		blackPlayerPanel.add(blackPlayerLabel);
 		
-		final JComboBox<PlayerType> blackPlayerTypeList;
 		blackPlayerTypeList = new JComboBox<PlayerType>(new PlayersModel(Counter.BLACK, mWindowController));
 		blackPlayerTypeList.setSelectedIndex(0);
 		blackPlayerPanel.add(blackPlayerTypeList);
@@ -269,12 +270,16 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 		
 		exitButton = new JButton("Exit");
 		exitButton.setPreferredSize(new Dimension(180, 55));
+		final Component me = this;
 		exitButton.addActionListener(new ActionListener()
 		{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				mWindowController.GUImakeExit();
+				int n = JOptionPane.showOptionDialog(me, "Are you sure you want to exit?", "Trying to exit!", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null);
+				
+				if(n == 0)
+					mWindowController.GUImakeExit();
 			}
 			
 		});
@@ -316,12 +321,32 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 	public void moveExecFinished(ReadOnlyBoard board, Counter player, Counter nextPlayer) {
 		//Update board, turn and undo button
 		turnLabel.setText(nextPlayer.toString());
-		undoButton.setEnabled(true);
+		
+		if(nextPlayer.getPlayerType() == PlayerType.AUTO)
+		{
+			randomMoveButton.setEnabled(false);
+			undoButton.setEnabled(false);
+		}
+		else
+		{
+			randomMoveButton.setEnabled(true);
+			undoButton.setEnabled(true);
+		}
+
 	}
 
 	@Override
 	public void moveExecStart(Counter player) {
-		// TODO Auto-generated method stub
+		if(player.getPlayerType() == PlayerType.AUTO)
+		{
+			randomMoveButton.setEnabled(false);
+			undoButton.setEnabled(false);
+		}
+		else
+		{
+			randomMoveButton.setEnabled(true);
+			undoButton.setEnabled(true);
+		}
 
 	}
 
@@ -365,14 +390,25 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 		
 		//Update the turn
 		turnLabel.setText(nextPlayer.toString());
-		//Update buttons
-		if(undoPossible)
+		
+		if(nextPlayer.getPlayerType() == PlayerType.AUTO)
 		{
-			undoButton.setEnabled(true);
+			randomMoveButton.setEnabled(false);
+			undoButton.setEnabled(false);
 		}
 		else
 		{
-			undoButton.setEnabled(false);
+			randomMoveButton.setEnabled(true);
+			
+			//Update buttons
+			if(undoPossible)
+			{
+				undoButton.setEnabled(true);
+			}
+			else
+			{
+				undoButton.setEnabled(false);
+			}
 		}
 	}
 
@@ -397,6 +433,9 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 		}
 		
 		randomMoveButton.setEnabled(true);
+		
+		whitePlayerTypeList.setSelectedItem(PlayerType.HUMAN);
+		blackPlayerTypeList.setSelectedItem(PlayerType.HUMAN);
 
 	}
 

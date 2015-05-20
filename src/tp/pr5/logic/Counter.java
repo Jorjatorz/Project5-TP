@@ -5,7 +5,7 @@ public enum Counter
 	EMPTY("Empty"), WHITE("White"), BLACK("Black");
 	
 	private String name;
-	PlayerType mPlayerType = PlayerType.HUMAN;
+	private PlayerType mPlayerType = PlayerType.HUMAN;
 	
 	Counter(String name) {
 		this.name = name;

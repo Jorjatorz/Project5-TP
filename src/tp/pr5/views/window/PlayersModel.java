@@ -39,26 +39,26 @@ public class PlayersModel implements ComboBoxModel<PlayerType> {
 	}
 
 	@Override
-	public void addListDataListener(ListDataListener l) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeListDataListener(ListDataListener l) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void setSelectedItem(Object anItem) {
 		this.selectedPlayerType = (PlayerType)anItem;
-		mController.GUIsetPlayerMode(player, this.selectedPlayerType);	
+		mController.GUIsetPlayerMode(player, this.selectedPlayerType);
 	}
 
 	@Override
 	public Object getSelectedItem() {
 		return selectedPlayerType;
+	}
+
+	@Override
+	public void addListDataListener(ListDataListener arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeListDataListener(ListDataListener arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

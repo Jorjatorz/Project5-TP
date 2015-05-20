@@ -13,6 +13,8 @@ public class WindowController extends Controller {
 
 	private volatile boolean isRunning = true;
 	
+	private Thread autoThread;
+	
 	public WindowController(GameTypeFactory factory, Game g) {
 		mGame = g;
 		mGameFactory = factory;
@@ -33,24 +35,27 @@ public class WindowController extends Controller {
 	public void GUImakeMove(int col, int row)
 	{		
 		makeMove(col, row);
+		automaticMove();
 	}
 	//Called by the view.
 	public void GUImakeUndo()
 	{
 		mGame.undo();
+		automaticMove();
 	}
 	//Called by the view.
 	public void GUImakeReset()
 	{
+		stopAutoPlayer();
+		mWhitePlayer.setPlayerType(PlayerType.HUMAN);
+		mBlackPlayer.setPlayerType(PlayerType.HUMAN);
 		mGame.reset(mGameFactory.createRules());
 	}
 	//Called by the view.
 	public void GUImakeRandomMove()
 	{
-		/*mWhitePlayer = mGameFactory.createRandomPlayer().;
-		mBlackPlayer = mGameFactory.createRandomPlayer();
-		
-		makeMove();*/
+		makeRandomMove();
+		automaticMove();
 	}
 	//Called by the view.
 	public void GUImakeChangeGame(int game, int cols, int rows)
@@ -86,38 +91,97 @@ public class WindowController extends Controller {
 	}
 
 	public void GUIsetPlayerMode(Counter player, PlayerType selectedPlayerType) {
-		// TODO Auto-generated method stub
+		player.setPlayerType(selectedPlayerType);
+		mGame.setPlayerType(player);
 		
+		automaticMove();
 	}
 	
 	private void stopAutoPlayer()
 	{
-		
+		if(autoThread != null)
+		{
+			autoThread.interrupt();
+			
+			try {
+				autoThread.join();
+			} catch (InterruptedException e) {
+			}
+		}
 	}
 	
 	private void automaticMove()
 	{
+		if(mGame.getTurn().getPlayerType() == PlayerType.HUMAN)
+			return;
 		
+		if(autoThread != null)
+		{
+			stopAutoPlayer();
+		}
+		
+		autoThread = new Thread()
+				{
+					@Override
+					public void run()
+					{
+						while(!(mGame.getTurn().getPlayerType() == PlayerType.HUMAN) && !mGame.isFinished() && !Thread.interrupted())
+						{
+							try {
+								this.sleep(500);
+							} catch (InterruptedException e) 
+							{
+								//Exit the loop
+								break;
+							}
+							makeRandomMove();
+						}
+					}
+				};
+				
+		autoThread.start();
 	}
 
 	@Override
 	//TODO Make a makeRandomMove y automaticMove
 	protected void makeMove(int col, int row) {
-		Move newMove;
+		Move newMove = null;
 		
 		if(mGame.getTurn() == Counter.WHITE)
 		{
 			if(mWhitePlayer.getPlayerType() == PlayerType.HUMAN)
 				newMove = mGameFactory.createHumanPlayerAtGUI(col, row).getMove(mGame.getBoard(), mWhitePlayer);
-			else
-				newMove = mGameFactory.createRandomPlayer().getMove(mGame.getBoard(), mWhitePlayer);
 		}
 		else
 		{
 			if(mBlackPlayer.getPlayerType() == PlayerType.HUMAN)
 				newMove = mGameFactory.createHumanPlayerAtGUI(col, row).getMove(mGame.getBoard(), mBlackPlayer);
-			else
-				newMove = mGameFactory.createRandomPlayer().getMove(mGame.getBoard(), mBlackPlayer);
+		}
+		
+		try
+		{
+			if(newMove != null)
+				mGame.executeMove(newMove);
+			
+		}catch(InvalidMove e)
+		{
+			mGame.moveErrorTriggered(e.getMessage());
+		}
+
+		
+	}
+	
+	private void makeRandomMove()
+	{
+		Move newMove;
+		
+		if(mGame.getTurn() == Counter.WHITE)
+		{
+			newMove = mGameFactory.createRandomPlayer().getMove(mGame.getBoard(), mWhitePlayer);
+		}
+		else
+		{
+			newMove = mGameFactory.createRandomPlayer().getMove(mGame.getBoard(), mBlackPlayer);
 		}
 		
 		try
@@ -128,8 +192,6 @@ public class WindowController extends Controller {
 		{
 			mGame.moveErrorTriggered(e.getMessage());
 		}
-
-		
 	}
 
 }
