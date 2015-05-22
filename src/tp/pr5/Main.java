@@ -3,16 +3,12 @@ package tp.pr5;
 import tp.pr5.control.*;
 import tp.pr5.logic.*;
 
-import java.util.Scanner;
-
-
 public class Main {
 	
 	//Set to true if user asked for help by argument
 	static private boolean helpDisplayed;
 	
 	public static void main(String[] args) {
-		//TODO CAMBIAR ESTO
 		Controller control;
 		helpDisplayed = false;
 		
@@ -61,6 +57,7 @@ public class Main {
 		int cols = 10, rows = 10;
 		boolean console = true;
 		Controller toReturnController = null;
+		Counter whitePlayer = Counter.WHITE, blackPlayer = Counter.BLACK;
 		
 		//Handle all the commands
 		boolean correct = true;
@@ -133,6 +130,56 @@ public class Main {
 					correct = false;
 				}
 				break;
+			case "--black":
+				if(args.length > i + 1)
+				{
+					if(args[i + 1].equals("auto"))
+					{
+						blackPlayer.setPlayerType(PlayerType.AUTO);
+						i = i + 2;
+					}
+					else if(args[i + 1].equals("human"))
+					{
+						blackPlayer.setPlayerType(PlayerType.HUMAN);
+						i = i + 2;
+					}
+					else
+					{
+						System.err.println("Incomplete command: Need a valid player type!!");
+						correct = false;
+					}
+				}
+				else
+				{
+					System.err.println("Incomplete command: Need a player type!!");
+					correct = false;
+				}
+				break;
+			case "--white":
+				if(args.length > i + 1)
+				{
+					if(args[i + 1].equals("auto"))
+					{
+						whitePlayer.setPlayerType(PlayerType.AUTO);
+						i = i + 2;
+					}
+					else if(args[i + 1].equals("human"))
+					{
+						whitePlayer.setPlayerType(PlayerType.HUMAN);
+						i = i + 2;
+					}
+					else
+					{
+						System.err.println("Incomplete command: Need a valid player type!!");
+						correct = false;
+					}
+				}
+				else
+				{
+					System.err.println("Incomplete command: Need a player type!!");
+					correct = false;
+				}
+				break;
 			case "-u":
 			case "--ui":
 				if(args.length > i + 1)
@@ -175,67 +222,73 @@ public class Main {
 		//Create the specific controller if all correct
 		if(correct)
 		{
+			GameTypeFactory gameFactory;
+			Game g = null;
+			
 			switch(gameToPlay)
 			{
 			case 0:
 				if(console)
 				{
-					GameTypeFactory c4Fact = new Connect4Factory();
-					Game g = new Game(c4Fact.createRules());
-					toReturnController = new ConsoleController(c4Fact, g);
+					gameFactory = new Connect4Factory();
+					g = new Game(gameFactory.createRules());
+					toReturnController = new ConsoleController(gameFactory, g);
 				}
 				else
 				{
-					GameTypeFactory c4Fact = new Connect4Factory();
-					Game g = new Game(c4Fact.createRules());
-					toReturnController = new WindowController(c4Fact, g);
+					gameFactory = new Connect4Factory();
+					g = new Game(gameFactory.createRules());
+					toReturnController = new WindowController(gameFactory, g);
 				}
 				break;
 			case 1:
 				if(console)
 				{
-					GameTypeFactory coFact = new ComplicaFactory();
-					Game g = new Game(coFact.createRules());
-					toReturnController = new ConsoleController(coFact, g);
+					gameFactory = new ComplicaFactory();
+					g = new Game(gameFactory.createRules());
+					toReturnController = new ConsoleController(gameFactory, g);
 				}
 				else
 				{
-					GameTypeFactory coFact = new ComplicaFactory();
-					Game g = new Game(coFact.createRules());
-					toReturnController = new WindowController(coFact, g);
+					gameFactory = new ComplicaFactory();
+					g = new Game(gameFactory.createRules());
+					toReturnController = new WindowController(gameFactory, g);
 				}
 				break;
 			case 2:
 				if(console)
 				{
-					GameTypeFactory rvFact = new ReversiFactory();
-					Game g = new Game(rvFact.createRules());
-					toReturnController = new ConsoleController(rvFact, g);
+					gameFactory = new ReversiFactory();
+					g = new Game(gameFactory.createRules());
+					toReturnController = new ConsoleController(gameFactory, g);
 				}
 				else
 				{
-					GameTypeFactory rvFact = new ReversiFactory();
-					Game g = new Game(rvFact.createRules());
-					toReturnController = new WindowController(rvFact, g);
+					gameFactory = new ReversiFactory();
+					g = new Game(gameFactory.createRules());
+					toReturnController = new WindowController(gameFactory, g);
 				}
 				break;
 			case 3:
 				if(console)
 				{
-					GameTypeFactory grFact = new GravityFactory(cols, rows);
-					Game g = new Game(grFact.createRules());
-					toReturnController = new ConsoleController(grFact, g);
+					gameFactory = new GravityFactory(cols, rows);
+					g = new Game(gameFactory.createRules());
+					toReturnController = new ConsoleController(gameFactory, g);
 				}
 				else
 				{
-					GameTypeFactory grFact = new GravityFactory(cols, rows);
-					Game g = new Game(grFact.createRules());
-					toReturnController = new WindowController(grFact, g);
+					gameFactory = new GravityFactory(cols, rows);
+					g = new Game(gameFactory.createRules());
+					toReturnController = new WindowController(gameFactory, g);
 				}
 				break;
 			}
+			
+			g.setPlayerType(blackPlayer);
+			g.setPlayerType(whitePlayer);
 		}
-		
+				
 		return toReturnController;
 	}
 	

@@ -22,6 +22,7 @@ public class ReversiRules implements GameRules {
 
 	@Override
 	public boolean isDraw(Counter lastPlayer, Board board) {
+		//Loop that counts the number of counters of each color
 		int blacks = 0, whites = 0;
 		for(int i = 1; i < board.getHeight(); i++)
 		{
@@ -40,6 +41,7 @@ public class ReversiRules implements GameRules {
 			}
 		}
 		
+		//Check if the number of whites is equal to the number of blacks and if there is not available moves for the current counter
 		if(whites == blacks && !ReversiMove.moveAvailable(board, Counter.swap(lastPlayer)))
 		{
 			return true;

@@ -25,6 +25,8 @@ public class WindowController extends Controller {
 		//Create the view
 		MainWindow view = new MainWindow(mGame, this);		
 		
+		//Reset the game
+		GUImakeReset();
 		//Empty loop
 		while(isRunning)
 		{
@@ -47,9 +49,8 @@ public class WindowController extends Controller {
 	public void GUImakeReset()
 	{
 		stopAutoPlayer();
-		mWhitePlayer.setPlayerType(PlayerType.HUMAN);
-		mBlackPlayer.setPlayerType(PlayerType.HUMAN);
 		mGame.reset(mGameFactory.createRules());
+		automaticMove();
 	}
 	//Called by the view.
 	public void GUImakeRandomMove()
@@ -81,12 +82,13 @@ public class WindowController extends Controller {
 				mGameFactory = new Connect4Factory();
 		}
 		
-		mGame.reset(mGameFactory.createRules());
+		GUImakeReset();
 		
 	}
 	//Called by the view.
 	public void GUImakeExit()
 	{
+		stopAutoPlayer();
 		isRunning = false;
 	}
 
@@ -134,6 +136,7 @@ public class WindowController extends Controller {
 								//Exit the loop
 								break;
 							}
+							
 							makeRandomMove();
 						}
 					}
@@ -147,16 +150,10 @@ public class WindowController extends Controller {
 	protected void makeMove(int col, int row) {
 		Move newMove = null;
 		
-		if(mGame.getTurn() == Counter.WHITE)
-		{
-			if(mWhitePlayer.getPlayerType() == PlayerType.HUMAN)
-				newMove = mGameFactory.createHumanPlayerAtGUI(col, row).getMove(mGame.getBoard(), mWhitePlayer);
-		}
-		else
-		{
-			if(mBlackPlayer.getPlayerType() == PlayerType.HUMAN)
-				newMove = mGameFactory.createHumanPlayerAtGUI(col, row).getMove(mGame.getBoard(), mBlackPlayer);
-		}
+			if(mGame.getTurn().getPlayerType() == PlayerType.HUMAN)
+				newMove = mGameFactory.createHumanPlayerAtGUI(col, row).getMove(mGame.getBoard(), mGame.getTurn());
+			else
+				newMove = mGameFactory.createHumanPlayerAtGUI(col, row).getMove(mGame.getBoard(), mGame.getTurn());
 		
 		try
 		{

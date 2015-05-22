@@ -13,6 +13,7 @@ public class ReversiMove extends Move {
 		mRow = row;
 		mColour = moveCounter;
 		
+		//Stack to keep track of the counters that were modified in this move
 		modifiedCountersStack = new Stack<UndoCounter>();
 	}
 
@@ -28,156 +29,31 @@ public class ReversiMove extends Move {
 	@Override
 	public void undo(Board board)
 	{
+		//swap all the counters in the stack to return to the previous point before the move
 		while(!modifiedCountersStack.empty())
 		{
 			UndoCounter uc = modifiedCountersStack.pop();			
 			board.setPosition(uc.getColumn(), uc.getRow(), uc.getColour());
 		}
-		
+		//Delete the addded counter
 		board.setPosition(mColumn, mRow, Counter.EMPTY);
 	}
 	
+	//Checks if there is a possible move to execute given a counter
 	public static boolean moveAvailable(Board board, Counter currentPlayer)
 	{
 		boolean toReturn = false;
 		
+		//Check if there is at least one valid move in all the empty board positions for current player
 		for(int row = 1; row <= board.getHeight(); row++)
 		{
 			for(int col = 1; col <= board.getWidth(); col++)
 			{
 				if(board.getPosition(col, row) == Counter.EMPTY)
 				{
-					//Look upwards
-					Counter toLook = Counter.EMPTY;
-					int i = row - 1;
-					int j = col;
-					if( i > 0 && board.getPosition(j, i) != currentPlayer)
+					if(moveValid(board, currentPlayer, col, row))
 					{
-						while(i > 0 && toLook != currentPlayer)
-						{
-							toLook = board.getPosition(j,  i);
-							i--;
-							
-							if(toLook == currentPlayer){
-								toReturn = true;
-							}
-						}
-					}
-					//Look downwards
-					toLook = Counter.EMPTY;
-					i = row + 1;
-					j = col;
-					if( i <= board.getHeight() && board.getPosition(j, i) != currentPlayer)
-					{
-						while(i <= board.getHeight() && toLook != currentPlayer)
-						{
-							toLook = board.getPosition(j,  i);
-							i++;
-							
-							if(toLook == currentPlayer){
-								toReturn = true;
-							}
-						}
-					}
-					//Look right
-					toLook = Counter.EMPTY;
-					i = row;
-					j = col + 1;
-					if( j <= board.getWidth() && board.getPosition(j, i) != currentPlayer)
-					{
-						while(j <= board.getWidth() && toLook != currentPlayer)
-						{
-							toLook = board.getPosition(j,  i);
-							j++;
-							
-							if(toLook == currentPlayer){
-								toReturn = true;
-							}
-						}
-					}
-					//Look left
-					toLook = Counter.EMPTY;
-					i = row;
-					j = col - 1;
-					if( j > 0 && board.getPosition(j, i) != currentPlayer)
-					{
-						while(j > 0 && toLook != currentPlayer)
-						{
-							toLook = board.getPosition(j,  i);
-							j--;
-							
-							if(toLook == currentPlayer){
-								toReturn = true;
-							}
-						}
-					}
-					//Look up right diagonal
-					toLook = Counter.EMPTY;
-					i = row - 1;
-					j = col + 1;
-					if( i > 0 && j <= board.getWidth() && board.getPosition(j, i) != currentPlayer)
-					{
-						while(i > 0 && j <= board.getWidth() && toLook != currentPlayer)
-						{
-							toLook = board.getPosition(j,  i);
-							i--;
-							j++;
-							
-							if(toLook == currentPlayer){
-								toReturn = true;
-							}
-						}
-					}
-					//Look up left diagonal
-					toLook = Counter.EMPTY;
-					i = row - 1;
-					j = col - 1;
-					if( i > 0 && j > 0 && board.getPosition(j, i) != currentPlayer)
-					{
-						while(i > 0 && j > 0 && toLook != currentPlayer)
-						{
-							toLook = board.getPosition(j,  i);
-							i--;
-							j--;
-							
-							if(toLook == currentPlayer){
-								toReturn = true;
-							}
-						}
-					}
-					//Look down right diagonal
-					toLook = Counter.EMPTY;
-					i = row + 1;
-					j = col + 1;
-					if( i <= board.getHeight() && j <= board.getWidth() && board.getPosition(j, i) != currentPlayer)
-					{
-						while(i <= board.getHeight() && j <= board.getWidth() && toLook != currentPlayer)
-						{
-							toLook = board.getPosition(j,  i);
-							i++;
-							j++;
-							
-							if(toLook == currentPlayer){
-								toReturn = true;
-							}
-						}
-					}
-					//Look down left diagonal
-					toLook = Counter.EMPTY;
-					i = row + 1;
-					j = col - 1;
-					if( i <= board.getHeight() && j > 0 && board.getPosition(j, i) != currentPlayer)
-					{
-						while(i <= board.getHeight() && j > 0 && toLook != currentPlayer)
-						{
-							toLook = board.getPosition(j,  i);
-							i++;
-							j--;
-							
-							if(toLook == currentPlayer){
-								toReturn = true;
-							}
-						}
+						return true;
 					}
 				}
 			}
@@ -186,6 +62,7 @@ public class ReversiMove extends Move {
 		return toReturn;
 	}
 
+	//Checks if the move to execute is valid (at least one swap)
 	public static boolean moveValid(Board board, Counter currentPlayer, int col, int row)
 	{
 		if(board.getPosition(col, row) != Counter.EMPTY)
@@ -210,6 +87,7 @@ public class ReversiMove extends Move {
 		return false;
 	}
 	
+	//Checks if the move to execute is valid (at least one swap) and if it is the counters are swap
 	private boolean applyMoveTransformations(Board board) throws InvalidMove
 	{		
 		if (mColumn < 1 || mColumn > board.getWidth()) {
@@ -237,37 +115,37 @@ public class ReversiMove extends Move {
 	{
 		boolean toReturn = false;
 		boolean swapsAvailable = false;
-		//Look upwards			
+		
 		int i = mRow - 1;
 		int j = mColumn;
 		Counter toLook = board.getPosition(j, i);
-		if( i > 0 && toLook != mColour)
+
+		//Look for correct move
+		while(i > 0 && (toLook != Counter.EMPTY) && (toLook != mColour))
 		{
-			while(i > 0 && (toLook != Counter.EMPTY) && (toLook != mColour))
-			{
-				toLook = board.getPosition(j,  i);
-				i--;
-				
-				if(toLook == mColour){
-					toReturn = true;
-					swapsAvailable = true;
-				}
-			}
+			toLook = board.getPosition(j,  i);
+			i--;
 			
-			if(swapsAvailable)
+			if(toLook == mColour){
+				toReturn = true;
+				swapsAvailable = true;
+			}
+		}
+		
+		if(swapsAvailable)
+		{
+			//Add the new counter
+			board.setPosition(mColumn, mRow, mColour);
+			
+			i = mRow - 1;
+			j = mColumn;
+			toLook = board.getPosition(j,i);
+			while(toLook != mColour)
 			{
-				board.setPosition(mColumn, mRow, mColour);
-				
-				i = mRow - 1;
-				j = mColumn;
-				toLook = board.getPosition(j,i);
-				while(toLook != mColour)
-				{
-					board.setPosition(j, i, Counter.swap(toLook));
-					modifiedCountersStack.add(new UndoCounter(toLook, i, j));
-					i--;
-					toLook = board.getPosition(j,  i);
-				}
+				board.setPosition(j, i, Counter.swap(toLook));
+				modifiedCountersStack.add(new UndoCounter(toLook, i, j));
+				i--;
+				toLook = board.getPosition(j,  i);
 			}
 		}
 		
@@ -278,39 +156,37 @@ public class ReversiMove extends Move {
 	{
 		boolean toReturn = false;
 		boolean swapsAvailable = false;
+		
 		int i = mRow + 1;
 		int j = mColumn;
 		Counter toLook = board.getPosition(j, i);
-		if( i <= board.getHeight() && toLook != mColour)
-		{
-			swapsAvailable = false;
-			while(i <= board.getHeight() && (toLook != Counter.EMPTY) && (toLook != mColour))
-			{
-				toLook = board.getPosition(j,  i);
-				i++;
-				
-				if(toLook == mColour){
-					toReturn = true;
-					swapsAvailable = true;
-				}
-			}
-			
-			if(swapsAvailable)
-			{
-				board.setPosition(mColumn, mRow, mColour);
 
-				i = mRow + 1;
-				j = mColumn;
-				toLook = board.getPosition(j,i);
-				while(toLook != mColour)
-				{
-					board.setPosition(j, i, Counter.swap(toLook));
-					modifiedCountersStack.add(new UndoCounter(toLook, i, j));
-					i++;
-					toLook = board.getPosition(j,  i);
-				}
+		while(i <= board.getHeight() && (toLook != Counter.EMPTY) && (toLook != mColour))
+		{
+			toLook = board.getPosition(j,  i);
+			i++;
+			
+			if(toLook == mColour){
+				toReturn = true;
+				swapsAvailable = true;
 			}
 		}
+		
+		if(swapsAvailable)
+		{
+			board.setPosition(mColumn, mRow, mColour);
+
+			i = mRow + 1;
+			j = mColumn;
+			toLook = board.getPosition(j,i);
+			while(toLook != mColour)
+			{
+				board.setPosition(j, i, Counter.swap(toLook));
+				modifiedCountersStack.add(new UndoCounter(toLook, i, j));
+				i++;
+				toLook = board.getPosition(j,  i);
+			}
+		}		
 		
 		return toReturn;
 	}
@@ -319,37 +195,35 @@ public class ReversiMove extends Move {
 	{
 		boolean toReturn = false;
 		boolean swapsAvailable = false;
+		
 		int i = mRow;
 		int j = mColumn + 1;
 		Counter toLook = board.getPosition(j, i);
-		if( j <= board.getWidth() && toLook != mColour)
+		
+		while(j <= board.getWidth() && (toLook != Counter.EMPTY) && (toLook != mColour))
 		{
-			swapsAvailable = false;
-			while(j <= board.getWidth() && (toLook != Counter.EMPTY) && (toLook != mColour))
-			{
-				toLook = board.getPosition(j,  i);
-				j++;
-				
-				if(toLook == mColour){
-					toReturn = true;
-					swapsAvailable = true;
-				}
-			}
+			toLook = board.getPosition(j,  i);
+			j++;
 			
-			if(swapsAvailable)
+			if(toLook == mColour){
+				toReturn = true;
+				swapsAvailable = true;
+			}
+		}
+		
+		if(swapsAvailable)
+		{
+			board.setPosition(mColumn, mRow, mColour);
+			
+			i = mRow;
+			j = mColumn + 1;
+			toLook = board.getPosition(j,i);
+			while(toLook != mColour)
 			{
-				board.setPosition(mColumn, mRow, mColour);
-				
-				i = mRow;
-				j = mColumn + 1;
-				toLook = board.getPosition(j,i);
-				while(toLook != mColour)
-				{
-					board.setPosition(j, i, Counter.swap(toLook));
-					modifiedCountersStack.add(new UndoCounter(toLook, i, j));
-					j++;
-					toLook = board.getPosition(j,  i);
-				}
+				board.setPosition(j, i, Counter.swap(toLook));
+				modifiedCountersStack.add(new UndoCounter(toLook, i, j));
+				j++;
+				toLook = board.getPosition(j,  i);
 			}
 		}
 		
@@ -360,39 +234,37 @@ public class ReversiMove extends Move {
 	{
 		boolean toReturn = false;
 		boolean swapsAvailable = false;
+		
 		int i = mRow;
 		int j = mColumn - 1;
 		Counter toLook = board.getPosition(j, i);
-		if( j > 0 && toLook != mColour)
+		
+		while(j > 0 && (toLook != Counter.EMPTY) && (toLook != mColour))
 		{
-			swapsAvailable = false;
-			while(j > 0 && (toLook != Counter.EMPTY) && (toLook != mColour))
-			{
-				toLook = board.getPosition(j,  i);
-				j--;
-				
-				if(toLook == mColour){
-					toReturn = true;
-					swapsAvailable = true;
-				}
-			}
+			toLook = board.getPosition(j,  i);
+			j--;
 			
-			if(swapsAvailable)
-			{
-				board.setPosition(mColumn, mRow, mColour);
-				
-				i = mRow;
-				j = mColumn - 1;
-				toLook = board.getPosition(j,i);
-				while(toLook != mColour)
-				{
-					board.setPosition(j, i, Counter.swap(toLook));
-					modifiedCountersStack.add(new UndoCounter(toLook, i, j));
-					j--;
-					toLook = board.getPosition(j,  i);
-				}
+			if(toLook == mColour){
+				toReturn = true;
+				swapsAvailable = true;
 			}
 		}
+		
+		if(swapsAvailable)
+		{
+			board.setPosition(mColumn, mRow, mColour);
+			
+			i = mRow;
+			j = mColumn - 1;
+			toLook = board.getPosition(j,i);
+			while(toLook != mColour)
+			{
+				board.setPosition(j, i, Counter.swap(toLook));
+				modifiedCountersStack.add(new UndoCounter(toLook, i, j));
+				j--;
+				toLook = board.getPosition(j,  i);
+			}
+		}		
 		
 		return toReturn;
 	}
@@ -401,39 +273,37 @@ public class ReversiMove extends Move {
 	{
 		boolean toReturn = false;
 		boolean swapsAvailable = false;
+		
 		int i = mRow - 1;
 		int j = mColumn + 1;
 		Counter toLook = board.getPosition(j, i);
-		if( i > 0 && j <= board.getWidth() && toLook != mColour)
+		
+		while(i > 0 && j <= board.getWidth() && (toLook != Counter.EMPTY) && (toLook != mColour))
 		{
-			swapsAvailable = false;
-			while(i > 0 && j <= board.getWidth() && (toLook != Counter.EMPTY) && (toLook != mColour))
+			toLook = board.getPosition(j,  i);
+			i--;
+			j++;
+			
+			if(toLook == mColour){
+				toReturn = true;
+				swapsAvailable = true;
+			}
+		}
+		
+		if(swapsAvailable)
+		{
+			board.setPosition(mColumn, mRow, mColour);
+			
+			i = mRow - 1;
+			j = mColumn + 1;
+			toLook = board.getPosition(j,i);
+			while(toLook != mColour)
 			{
-				toLook = board.getPosition(j,  i);
+				board.setPosition(j, i, Counter.swap(toLook));
+				modifiedCountersStack.add(new UndoCounter(toLook, i, j));
 				i--;
 				j++;
-				
-				if(toLook == mColour){
-					toReturn = true;
-					swapsAvailable = true;
-				}
-			}
-			
-			if(swapsAvailable)
-			{
-				board.setPosition(mColumn, mRow, mColour);
-				
-				i = mRow - 1;
-				j = mColumn + 1;
-				toLook = board.getPosition(j,i);
-				while(toLook != mColour)
-				{
-					board.setPosition(j, i, Counter.swap(toLook));
-					modifiedCountersStack.add(new UndoCounter(toLook, i, j));
-					i--;
-					j++;
-					toLook = board.getPosition(j,  i);
-				}
+				toLook = board.getPosition(j,  i);
 			}
 		}
 		
@@ -444,39 +314,37 @@ public class ReversiMove extends Move {
 	{
 		boolean toReturn = false;
 		boolean swapsAvailable = false;
+		
 		int i = mRow - 1;
 		int j = mColumn - 1;
 		Counter toLook = board.getPosition(j, i);
-		if( i > 0 && j > 0 && toLook != mColour)
+
+		while(i > 0 && j > 0 && (toLook != Counter.EMPTY) && (toLook != mColour))
 		{
-			swapsAvailable = false;
-			while(i > 0 && j > 0 && (toLook != Counter.EMPTY) && (toLook != mColour))
+			toLook = board.getPosition(j,  i);
+			i--;
+			j--;
+			
+			if(toLook == mColour){
+				toReturn = true;
+				swapsAvailable = true;
+			}
+		}
+		
+		if(swapsAvailable)
+		{
+			board.setPosition(mColumn, mRow, mColour);
+			
+			i = mRow - 1;
+			j = mColumn - 1;
+			toLook = board.getPosition(j,i);
+			while(toLook != mColour)
 			{
-				toLook = board.getPosition(j,  i);
+				board.setPosition(j, i, Counter.swap(toLook));
+				modifiedCountersStack.add(new UndoCounter(toLook, i, j));
 				i--;
 				j--;
-				
-				if(toLook == mColour){
-					toReturn = true;
-					swapsAvailable = true;
-				}
-			}
-			
-			if(swapsAvailable)
-			{
-				board.setPosition(mColumn, mRow, mColour);
-				
-				i = mRow - 1;
-				j = mColumn - 1;
-				toLook = board.getPosition(j,i);
-				while(toLook != mColour)
-				{
-					board.setPosition(j, i, Counter.swap(toLook));
-					modifiedCountersStack.add(new UndoCounter(toLook, i, j));
-					i--;
-					j--;
-					toLook = board.getPosition(j,  i);
-				}
+				toLook = board.getPosition(j,  i);
 			}
 		}
 		
@@ -487,41 +355,40 @@ public class ReversiMove extends Move {
 	{
 		boolean toReturn = false;
 		boolean swapsAvailable = false;
+		
 		int i = mRow + 1;
 		int j = mColumn + 1;
 		Counter toLook = board.getPosition(j, i);
-		if( i <= board.getHeight() && j <= board.getWidth() && toLook != mColour)
+	
+		while(i <= board.getHeight() && j <= board.getWidth() && (toLook != Counter.EMPTY) && (toLook != mColour))
 		{
-			swapsAvailable = false;
-			while(i <= board.getHeight() && j <= board.getWidth() && (toLook != Counter.EMPTY) && (toLook != mColour))
-			{
-				toLook = board.getPosition(j,  i);
-				i++;
-				j++;
-				
-				if(toLook == mColour){
-					toReturn = true;
-					swapsAvailable = true;
-				}
-			}
+			toLook = board.getPosition(j,  i);
+			i++;
+			j++;
 			
-			if(swapsAvailable)
-			{
-				board.setPosition(mColumn, mRow, mColour);
-				
-				i = mRow + 1;
-				j = mColumn + 1;
-				toLook = board.getPosition(j,i);
-				while(toLook != mColour)
-				{
-					board.setPosition(j, i, Counter.swap(toLook));
-					modifiedCountersStack.add(new UndoCounter(toLook, i, j));
-					i++;
-					j++;
-					toLook = board.getPosition(j,  i);
-				}
+			if(toLook == mColour){
+				toReturn = true;
+				swapsAvailable = true;
 			}
 		}
+		
+		if(swapsAvailable)
+		{
+			board.setPosition(mColumn, mRow, mColour);
+			
+			i = mRow + 1;
+			j = mColumn + 1;
+			toLook = board.getPosition(j,i);
+			while(toLook != mColour)
+			{
+				board.setPosition(j, i, Counter.swap(toLook));
+				modifiedCountersStack.add(new UndoCounter(toLook, i, j));
+				i++;
+				j++;
+				toLook = board.getPosition(j,  i);
+			}
+		}
+		
 		
 		return toReturn;
 	}
@@ -534,37 +401,36 @@ public class ReversiMove extends Move {
 		int i = mRow + 1;
 		int j = mColumn - 1;
 		Counter toLook = board.getPosition(j, i);
-		if( i <= board.getHeight() && j > 0 && toLook != mColour)
+
+		while(i <= board.getHeight() && j > 0 && (toLook != Counter.EMPTY) && (toLook != mColour))
 		{
-			while(i <= board.getHeight() && j > 0 && (toLook != Counter.EMPTY) && (toLook != mColour))
-			{
-				toLook = board.getPosition(j,  i);
-				i++;
-				j--;
-				
-				if(toLook == mColour){
-					toReturn = true;
-					swapsAvailable = true;
-				}
-			}
+			toLook = board.getPosition(j,  i);
+			i++;
+			j--;
 			
-			if(swapsAvailable)
-			{
-				board.setPosition(mColumn, mRow, mColour);
-				
-				i = mRow + 1;
-				j = mColumn - 1;
-				toLook = board.getPosition(j,i);
-				while(toLook != mColour)
-				{
-					board.setPosition(j, i, Counter.swap(toLook));
-					modifiedCountersStack.add(new UndoCounter(toLook, i, j));
-					i++;
-					j--;
-					toLook = board.getPosition(j,  i);
-				}
+			if(toLook == mColour){
+				toReturn = true;
+				swapsAvailable = true;
 			}
 		}
+		
+		if(swapsAvailable)
+		{
+			board.setPosition(mColumn, mRow, mColour);
+			
+			i = mRow + 1;
+			j = mColumn - 1;
+			toLook = board.getPosition(j,i);
+			while(toLook != mColour)
+			{
+				board.setPosition(j, i, Counter.swap(toLook));
+				modifiedCountersStack.add(new UndoCounter(toLook, i, j));
+				i++;
+				j--;
+				toLook = board.getPosition(j,  i);
+			}
+		}
+		
 		
 		return toReturn;
 	}
@@ -572,22 +438,21 @@ public class ReversiMove extends Move {
 	private static boolean upMoveAvailability(Board board, int col, int row, Counter player)
 	{
 		boolean toReturn = false;
-		//Look upwards			
+
 		int i = row - 1;
 		int j = col;
 		Counter toLook = board.getPosition(j, i);
-		if( i > 0 && toLook != player)
+		
+		while(i > 0 && (toLook != Counter.EMPTY) && (toLook != player))
 		{
-			while(i > 0 && (toLook != Counter.EMPTY) && (toLook != player))
-			{
-				toLook = board.getPosition(j,  i);
-				i--;
-				
-				if(toLook == player){
-					toReturn = true;
-				}
+			toLook = board.getPosition(j,  i);
+			i--;
+			
+			if(toLook == player){
+				toReturn = true;
 			}
 		}
+		
 		
 		return toReturn;
 	}
@@ -599,18 +464,17 @@ public class ReversiMove extends Move {
 		int i = row + 1;
 		int j = col;
 		Counter toLook = board.getPosition(j, i);
-		if( i <= board.getHeight() && toLook != player)
+		
+		while(i <= board.getHeight() && (toLook != Counter.EMPTY) && (toLook != player))
 		{
-			while(i <= board.getHeight() && (toLook != Counter.EMPTY) && (toLook != player))
-			{
-				toLook = board.getPosition(j,  i);
-				i++;
-				
-				if(toLook == player){
-					toReturn = true;
-				}
+			toLook = board.getPosition(j,  i);
+			i++;
+			
+			if(toLook == player){
+				toReturn = true;
 			}
 		}
+		
 		
 		return toReturn;
 	}
@@ -622,18 +486,17 @@ public class ReversiMove extends Move {
 		int i = row;
 		int j = col + 1;
 		Counter toLook = board.getPosition(j, i);
-		if( j <= board.getWidth() && toLook != player)
+		
+		while(j <= board.getWidth() && (toLook != Counter.EMPTY) && (toLook != player))
 		{
-			while(j <= board.getWidth() && (toLook != Counter.EMPTY) && (toLook != player))
-			{
-				toLook = board.getPosition(j,  i);
-				j++;
-				
-				if(toLook == player){
-					toReturn = true;
-				}
+			toLook = board.getPosition(j,  i);
+			j++;
+			
+			if(toLook == player){
+				toReturn = true;
 			}
 		}
+		
 		
 		return toReturn;
 	}
@@ -645,19 +508,18 @@ public class ReversiMove extends Move {
 		int i = row;
 		int j = col - 1;
 		Counter toLook = board.getPosition(j, i);
-		if( j > 0 && toLook != player)
+		
+		while(j > 0 && (toLook != Counter.EMPTY) && (toLook != player))
 		{
-			while(j > 0 && (toLook != Counter.EMPTY) && (toLook != player))
-			{
-				toLook = board.getPosition(j,  i);
-				j--;
-				
-				if(toLook == player){
-					toReturn = true;
-				}
-			}
+			toLook = board.getPosition(j,  i);
+			j--;
 			
+			if(toLook == player){
+				toReturn = true;
+			}
 		}
+			
+		
 		
 		return toReturn;
 	}
@@ -669,19 +531,17 @@ public class ReversiMove extends Move {
 		int i = row - 1;
 		int j = col + 1;
 		Counter toLook = board.getPosition(j, i);
-		if( i > 0 && j <= board.getWidth() && toLook != player)
+
+		while(i > 0 && j <= board.getWidth() && (toLook != Counter.EMPTY) && (toLook != player))
 		{
-			while(i > 0 && j <= board.getWidth() && (toLook != Counter.EMPTY) && (toLook != player))
-			{
-				toLook = board.getPosition(j,  i);
-				i--;
-				j++;
-				
-				if(toLook == player){
-					toReturn = true;
-				}
+			toLook = board.getPosition(j,  i);
+			i--;
+			j++;
+			
+			if(toLook == player){
+				toReturn = true;
 			}
-		}
+		}		
 		
 		return toReturn;
 	}
@@ -693,19 +553,18 @@ public class ReversiMove extends Move {
 		int i = row - 1;
 		int j = col - 1;
 		Counter toLook = board.getPosition(j, i);
-		if( i > 0 && j > 0 && toLook != player)
+		
+		while(i > 0 && j > 0 && (toLook != Counter.EMPTY) && (toLook != player))
 		{
-			while(i > 0 && j > 0 && (toLook != Counter.EMPTY) && (toLook != player))
-			{
-				toLook = board.getPosition(j,  i);
-				i--;
-				j--;
-				
-				if(toLook == player){
-					toReturn = true;
-				}
+			toLook = board.getPosition(j,  i);
+			i--;
+			j--;
+			
+			if(toLook == player){
+				toReturn = true;
 			}
 		}
+		
 		
 		return toReturn;
 	}
@@ -717,19 +576,18 @@ public class ReversiMove extends Move {
 		int i = row + 1;
 		int j = col + 1;
 		Counter toLook = board.getPosition(j, i);
-		if( i <= board.getHeight() && j <= board.getWidth() && toLook != player)
+		
+		while(i <= board.getHeight() && j <= board.getWidth() && (toLook != Counter.EMPTY) && (toLook != player))
 		{
-			while(i <= board.getHeight() && j <= board.getWidth() && (toLook != Counter.EMPTY) && (toLook != player))
-			{
-				toLook = board.getPosition(j,  i);
-				i++;
-				j++;
-				
-				if(toLook == player){
-					toReturn = true;
-				}
+			toLook = board.getPosition(j,  i);
+			i++;
+			j++;
+			
+			if(toLook == player){
+				toReturn = true;
 			}
 		}
+		
 		
 		return toReturn;
 	}
@@ -741,23 +599,24 @@ public class ReversiMove extends Move {
 		int i = row + 1;
 		int j = col - 1;
 		Counter toLook = board.getPosition(j, i);
-		if( i <= board.getHeight() && j > 0 && toLook != player)
+		
+		while(i <= board.getHeight() && j > 0 && (toLook != Counter.EMPTY) && (toLook != player))
 		{
-			while(i <= board.getHeight() && j > 0 && (toLook != Counter.EMPTY) && (toLook != player))
-			{
-				toLook = board.getPosition(j,  i);
-				i++;
-				j--;
-				
-				if(toLook == player){
-					toReturn = true;
-				}
+			toLook = board.getPosition(j,  i);
+			i++;
+			j--;
+			
+			if(toLook == player){
+				toReturn = true;
 			}
 		}
+		
 		
 		return toReturn;
 	}
 	
+	
+	//Private class containing information about a counter which was swapped
 	private class UndoCounter
 	{
 		private int row, col;

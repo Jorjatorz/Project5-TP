@@ -126,7 +126,7 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 		//Combo box with different games list
 
 		whitePlayerTypeList = new JComboBox<PlayerType>(new PlayersModel(Counter.WHITE, mWindowController));
-		whitePlayerTypeList.setSelectedIndex(0);
+		//whitePlayerTypeList.setSelectedIndex(0);
 		whitePlayerPanel.add(whitePlayerTypeList);
 		
 		JPanel blackPlayerPanel = new JPanel();
@@ -135,7 +135,7 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 		blackPlayerPanel.add(blackPlayerLabel);
 		
 		blackPlayerTypeList = new JComboBox<PlayerType>(new PlayersModel(Counter.BLACK, mWindowController));
-		blackPlayerTypeList.setSelectedIndex(0);
+		//blackPlayerTypeList.setSelectedIndex(0);
 		blackPlayerPanel.add(blackPlayerTypeList);
 		
 		playerTypePanel.add(whitePlayerPanel);
@@ -322,6 +322,7 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 		//Update board, turn and undo button
 		turnLabel.setText(nextPlayer.toString());
 		
+		//Check if the next player is an automatic one and if it's disable the random and undo buttons
 		if(nextPlayer.getPlayerType() == PlayerType.AUTO)
 		{
 			randomMoveButton.setEnabled(false);
@@ -337,6 +338,7 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 
 	@Override
 	public void moveExecStart(Counter player) {
+		//Check if the current player is an automatic one and if it's disable the random and undo buttons
 		if(player.getPlayerType() == PlayerType.AUTO)
 		{
 			randomMoveButton.setEnabled(false);
@@ -434,8 +436,8 @@ public class MainWindow extends javax.swing.JFrame implements GameObserver {
 		
 		randomMoveButton.setEnabled(true);
 		
-		whitePlayerTypeList.setSelectedItem(PlayerType.HUMAN);
-		blackPlayerTypeList.setSelectedItem(PlayerType.HUMAN);
+	//	whitePlayerTypeList.setSelectedItem(PlayerType.HUMAN);
+//		blackPlayerTypeList.setSelectedItem(PlayerType.HUMAN);
 
 	}
 

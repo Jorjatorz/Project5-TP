@@ -12,7 +12,6 @@ public class Game implements Observable<GameObserver>{
 	private boolean mFinished;
 	private Counter mWinner;
 	private GameRules mRules;
-	private Move mLastMove;
 	
 	//Undo stack
 	private Stack<Move> mUndoStack;
@@ -80,6 +79,7 @@ public class Game implements Observable<GameObserver>{
 		mRules = rules;
 		
 		mBoard = rules.newBoard();
+		
 		mTurn = rules.initialPlayer();
 		
 		mUndoStack.removeAllElements();
@@ -157,15 +157,14 @@ public class Game implements Observable<GameObserver>{
 			//Add the move to the stack
 			mUndoStack.push(move);
 			
-			mLastMove = move;
-			
 			//Notify the end of a move
 			for(GameObserver o: mObserversList)
 			{
 				o.moveExecFinished(mBoard, mTurn,  mRules.nextTurn(mTurn, mBoard));
 			}
 			
-			Counter newWinner = mRules.winningMove(mLastMove, mBoard);
+			//Check for enf of game
+			Counter newWinner = mRules.winningMove(move, mBoard);
 			if(newWinner != Counter.EMPTY) //If we have a winner exit
 			{
 				mWinner = newWinner;
@@ -176,7 +175,7 @@ public class Game implements Observable<GameObserver>{
 					o.onGameOver(mBoard, mWinner);
 				}
 			}
-			else if(mRules.isDraw(mLastMove.getPlayer(), mBoard)) //If the board full is a draw, exit
+			else if(mRules.isDraw(nextTurn(), mBoard)) //If the board full is a draw, exit
 			{
 				mWinner = Counter.EMPTY; //No winner
 				setFinished(true);
