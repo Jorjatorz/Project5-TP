@@ -92,7 +92,12 @@ public class ReversiMove extends Move {
 	{		
 		if (mColumn < 1 || mColumn > board.getWidth()) {
 			throw new InvalidMove("Invalid move: column number " + mColumn + " is not on the board.");
-		} else {
+		}
+		else if(board.getPosition(mColumn, mRow) != Counter.EMPTY)
+		{
+			throw new InvalidMove("Invalid move: cell already has a counter");
+		}
+		else {
 			boolean up = upMoveTransformations(board);
 			boolean down = downMoveTransformations(board);
 			boolean right = rightMoveTransformations(board);
