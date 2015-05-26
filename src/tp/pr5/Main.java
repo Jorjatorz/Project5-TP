@@ -5,6 +5,8 @@ import tp.pr5.logic.*;
 
 public class Main {
 	
+	//TODO cambiar el while del main. (poner en system exit en console) Hacer los throws en game y no el cotroller. Cambiar el moveavailability por parametrico 
+	
 	//Set to true if user asked for help by argument
 	static private boolean helpDisplayed;
 	
