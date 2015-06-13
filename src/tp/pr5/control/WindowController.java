@@ -27,10 +27,6 @@ public class WindowController extends Controller {
 		
 		//Reset the game
 		GUImakeReset();
-		//Empty loop
-		while(isRunning)
-		{
-		}
 	}
 	
 	//Called by the view.

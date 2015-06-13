@@ -230,6 +230,8 @@ public class ConsoleController extends Controller {
 			String command = in.nextLine();
 			handleCommand(command);
 		}
+		
+		System.exit(0);
 	}
 
 	@Override

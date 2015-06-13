@@ -35,7 +35,6 @@ public class Main {
 			control.run();
 			
 			System.out.println("Closing the game...");			
-			System.exit(0);
 		}
 		else
 		{
