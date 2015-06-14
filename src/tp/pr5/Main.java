@@ -5,8 +5,6 @@ import tp.pr5.logic.*;
 
 public class Main {
 	
-	//TODO Cambiar el moveavailability por parametrico 
-	
 	//Set to true if user asked for help by argument
 	static private boolean helpDisplayed;
 	
