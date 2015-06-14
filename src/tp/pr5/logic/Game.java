@@ -133,15 +133,15 @@ public class Game implements Observable<GameObserver>{
 	}
 	
 	//Execute a new move if the game is not finished, its made by the correct player and the column is valid.
-	public void executeMove(Move move) throws InvalidMove
+	public void executeMove(Move move)
 	{
 		if(isFinished())
 		{
-			throw new InvalidMove("Game has finished");
+			moveErrorTriggered("Game has finished");
 		}
 		else if(move.getPlayer() != mTurn)
 		{
-			throw new InvalidMove("Not your turn!");
+			moveErrorTriggered("Not your turn!");
 		}
 		else
 		{			
@@ -152,7 +152,12 @@ public class Game implements Observable<GameObserver>{
 			}
 			
 		 	//Do the move (if valid)
-			move.executeMove(mBoard);
+			try {
+				move.executeMove(mBoard);
+			} catch (InvalidMove e) {
+				moveErrorTriggered(e.getMessage());
+				return;
+			}
 			
 			//Add the move to the stack
 			mUndoStack.push(move);

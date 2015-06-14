@@ -27,10 +27,6 @@ public class WindowController extends Controller {
 		
 		//Reset the game
 		GUImakeReset();
-		//Empty loop
-		while(isRunning)
-		{
-		}
 	}
 	
 	//Called by the view.
@@ -89,7 +85,8 @@ public class WindowController extends Controller {
 	public void GUImakeExit()
 	{
 		stopAutoPlayer();
-		isRunning = false;
+		
+		System.exit(0);
 	}
 
 	public void GUIsetPlayerMode(Counter player, PlayerType selectedPlayerType) {
@@ -130,14 +127,13 @@ public class WindowController extends Controller {
 						while(!(mGame.getTurn().getPlayerType() == PlayerType.HUMAN) && !mGame.isFinished() && !Thread.interrupted())
 						{
 							try {
-								this.sleep(500);
+								this.sleep(500);								
+								makeRandomMove();
 							} catch (InterruptedException e) 
 							{
 								//Exit the loop
 								break;
 							}
-							
-							makeRandomMove();
 						}
 					}
 				};
@@ -150,20 +146,15 @@ public class WindowController extends Controller {
 	protected void makeMove(int col, int row) {
 		Move newMove = null;
 		
-			if(mGame.getTurn().getPlayerType() == PlayerType.HUMAN)
-				newMove = mGameFactory.createHumanPlayerAtGUI(col, row).getMove(mGame.getBoard(), mGame.getTurn());
-			else
-				newMove = mGameFactory.createHumanPlayerAtGUI(col, row).getMove(mGame.getBoard(), mGame.getTurn());
-		
-		try
-		{
-			if(newMove != null)
-				mGame.executeMove(newMove);
-			
-		}catch(InvalidMove e)
-		{
-			mGame.moveErrorTriggered(e.getMessage());
-		}
+		if(mGame.getTurn().getPlayerType() == PlayerType.HUMAN)
+			newMove = mGameFactory.createHumanPlayerAtGUI(col, row).getMove(mGame.getBoard(), mGame.getTurn());
+		else
+			newMove = mGameFactory.createHumanPlayerAtGUI(col, row).getMove(mGame.getBoard(), mGame.getTurn());
+	
+	
+		if(newMove != null)
+			mGame.executeMove(newMove);
+
 
 		
 	}
@@ -181,14 +172,7 @@ public class WindowController extends Controller {
 			newMove = mGameFactory.createRandomPlayer().getMove(mGame.getBoard(), mBlackPlayer);
 		}
 		
-		try
-		{
-			mGame.executeMove(newMove);
-			
-		}catch(InvalidMove e)
-		{
-			mGame.moveErrorTriggered(e.getMessage());
-		}
+		mGame.executeMove(newMove);
 	}
 
 }

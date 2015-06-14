@@ -31,9 +31,7 @@ public class Main {
 		if(control != null)
 		{
 			control.run();
-			
-			System.out.println("Closing the game...");			
-			System.exit(0);
+	
 		}
 		else
 		{

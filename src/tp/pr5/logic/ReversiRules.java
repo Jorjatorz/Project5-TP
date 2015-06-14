@@ -42,7 +42,7 @@ public class ReversiRules implements GameRules {
 		}
 		
 		//Check if the number of whites is equal to the number of blacks and if there is not available moves for the current counter
-		if(whites == blacks && !ReversiMove.moveAvailable(board, Counter.swap(lastPlayer)))
+		if(whites == blacks && board.isFull())
 		{
 			return true;
 		}
@@ -66,32 +66,39 @@ public class ReversiRules implements GameRules {
 
 	@Override
 	public Counter nextTurn(Counter lastPlayer, Board board) {
-		return Counter.swap(lastPlayer);
+		Counter newTurn = Counter.swap(lastPlayer);
+		
+		if(!ReversiMove.moveAvailable(board, newTurn))
+		{
+			return lastPlayer;
+		}
+		
+		return newTurn;
 	}
 
 	@Override
-	public Counter winningMove(Move lastMove, Board board) {
-		
-		int blacks = 0, whites = 0;
-		for(int i = 1; i <= board.getHeight(); i++)
+	public Counter winningMove(Move lastMove, Board board)
+	{		
+		if(board.isFull())
 		{
-			for(int j = 1; j <= board.getWidth(); j++)
+			int blacks = 0, whites = 0;
+			for(int i = 1; i <= board.getHeight(); i++)
 			{
-				Counter color = board.getPosition(j, i);
-				
-				if(color == Counter.WHITE)
+				for(int j = 1; j <= board.getWidth(); j++)
 				{
-					whites++;
-				}
-				else if(color == Counter.BLACK)
-				{
-					blacks++;
+					Counter color = board.getPosition(j, i);
+					
+					if(color == Counter.WHITE)
+					{
+						whites++;
+					}
+					else if(color == Counter.BLACK)
+					{
+						blacks++;
+					}
 				}
 			}
-		}
-		
-		if(!ReversiMove.moveAvailable(board, Counter.swap(lastMove.getPlayer())) && board.isFull())
-		{
+			
 			if(blacks > whites)
 			{
 				return Counter.BLACK;

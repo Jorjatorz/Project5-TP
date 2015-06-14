@@ -230,6 +230,9 @@ public class ConsoleController extends Controller {
 			String command = in.nextLine();
 			handleCommand(command);
 		}
+		
+		System.out.println("Closing the game...");		
+		System.exit(0);
 	}
 
 	@Override
@@ -252,14 +255,8 @@ public class ConsoleController extends Controller {
 				newMove = mGameFactory.createRandomPlayer().getMove(mGame.getBoard(), mBlackPlayer);
 		}
 		
-		try
-		{
-			mGame.executeMove(newMove);
+		mGame.executeMove(newMove);
 			
-		}catch(InvalidMove e)
-		{
-			mGame.moveErrorTriggered(e.getMessage());
-		}
 
 		
 	}
